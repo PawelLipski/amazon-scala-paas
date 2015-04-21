@@ -1,0 +1,6 @@
+- hosts: h2
+  tasks:
+
+  - name: Shutdown the service
+    command: killall -TERM java
+

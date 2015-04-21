@@ -1,0 +1,25 @@
+- hosts: h2
+  tasks:
+
+  - name: Install git
+    apt: name=git state=present force=yes
+    sudo: yes
+
+  - name: Clone/update the repo
+    git: repo=https://github.com/tilius/posh-wolf-ws.git dest=~/repo
+
+  - name: Update apt source list
+    shell: echo "deb http://dl.bintray.com/sbt/debian /" | 
+        sudo tee -a /etc/apt/sources.list.d/sbt.list ~/.apt.sbt.updated creates=~/.apt.sbt.updated
+
+  - name: Install sbt
+    apt: name=sbt state=present force=yes update_cache=yes
+    sudo: yes
+
+  - name: Install OpenJDK
+    apt: name=openjdk-6-jdk state=present force=yes
+    sudo: yes
+    
+  - name: Launch the service
+    shell: nohup sbt run & chdir=~/repo
+
