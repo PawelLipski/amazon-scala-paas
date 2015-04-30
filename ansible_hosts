@@ -1,9 +1,14 @@
-[slave0]
+
+[master-public]
+
+ubuntu@52.28.77.187 ansible_ssh_private_key_file=~/AWS/aws-master-key.pem
+
+
+[slaves-private]
+
 ubuntu@172.31.8.107 ansible_ssh_private_key_file=~/AWS/aws-master-key.pem
 
-[slave1]
 ubuntu@172.31.15.174 ansible_ssh_private_key_file=~/AWS/aws-master-key.pem
 
-[slave2]
 ubuntu@172.31.2.145 ansible_ssh_private_key_file=~/AWS/aws-master-key.pem
 

@@ -1,4 +1,4 @@
-- hosts: h2
+- hosts: master-public
   tasks:
 
   - name: Install git
@@ -6,7 +6,7 @@
     sudo: yes
 
   - name: Clone/update the repo
-    git: repo=https://github.com/tilius/posh-wolf-ws.git dest=~/repo
+    git: repo=https://github.com/tilius/posh-wolf-ws.git dest=~/paas-repo
 
   - name: Update apt source list
     shell: echo "deb http://dl.bintray.com/sbt/debian /" | 
@@ -21,5 +21,5 @@
     sudo: yes
     
   - name: Launch the service
-    shell: nohup sbt run & chdir=~/repo
+    shell: nohup sbt run & chdir=~/paas-repo
 
