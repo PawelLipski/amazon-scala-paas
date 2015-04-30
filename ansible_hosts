@@ -1,6 +1,9 @@
-[h1]
-ubuntu@YOUR_AMAZON_IP ansible_ssh_private_key_file=YOUR_PATH/aws-master-key.pem
+[slave0]
+ubuntu@172.31.8.107 ansible_ssh_private_key_file=~/AWS/aws-master-key.pem
 
-[h2]
-ubuntu@YOUR_OTHER_AMAZON_IP ansible_ssh_private_key_file=YOUR_PATH/aws-master-key.pem
+[slave1]
+ubuntu@172.31.15.174 ansible_ssh_private_key_file=~/AWS/aws-master-key.pem
+
+[slave2]
+ubuntu@172.31.2.145 ansible_ssh_private_key_file=~/AWS/aws-master-key.pem
 
