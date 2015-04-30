@@ -1,0 +1,10 @@
+- hosts: master-public
+  tasks:
+
+  - name: Install ansible
+    apt: name=ansible state=present force=yes
+    sudo: yes
+
+  - name: Create paas-boot directory
+    file: path=/home/ubuntu/paas-boot state=directory
+

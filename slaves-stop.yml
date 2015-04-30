@@ -1,4 +1,4 @@
-- hosts: h2
+- hosts: slaves
   tasks:
 
   - name: Shutdown the service

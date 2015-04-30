@@ -1,4 +1,4 @@
-- hosts: master-public
+- hosts: slaves
   tasks:
 
   - name: Install git
