@@ -6,8 +6,8 @@
     sudo: yes
 
   - name: Clone/update the boot repo
-    git: repo=https://github.com/tilius/amazon-scala-paas.git dest=~/paas-repo
+    git: repo=https://github.com/tilius/amazon-scala-paas.git dest=/home/ubuntu/paas-repo
 
   - name: Disable host key checking
-  - copy: src=~/paas-repo/ansible.cfg dest=~/.ansible.cfg
+    file: src=/home/ubuntu/paas-repo/ansible.cfg dest=/home/ubuntu/.ansible.cfg
 
