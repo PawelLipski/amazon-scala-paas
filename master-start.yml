@@ -9,8 +9,5 @@
     git: repo=https://github.com/tilius/amazon-scala-paas.git dest=~/paas-repo
 
   - name: Disable host key checking
-  - shell: cat > ~/.ansible.cfg <<- EOF
-   [defaults]
-   host_key_checking = False
-   EOF creates=~/.ansible.cfg
+  - copy: src=~/paas-repo/ansible.cfg dest=~/.ansible.cfg
 
