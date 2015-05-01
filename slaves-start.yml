@@ -6,7 +6,7 @@
     sudo: yes
 
   - name: Clone/update the repo
-    git: repo=https://github.com/tilius/posh-wolf-ws.git dest=~/paas-repo
+    git: repo=https://github.com/tilius/posh-wolf-ws.git dest=~/ws-repo
 
   - name: Update apt source list
     shell: echo "deb http://dl.bintray.com/sbt/debian /" | 
@@ -21,5 +21,5 @@
     sudo: yes
     
   - name: Launch the service
-    shell: nohup sbt run & chdir=~/paas-repo
+    shell: nohup sbt run & chdir=~/ws-repo
 

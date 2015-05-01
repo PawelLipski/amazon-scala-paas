@@ -1,0 +1,5 @@
+
+[master-public]
+
+ubuntu@MASTER_PUBLIC_IP ansible_ssh_private_key_file=PRIVATE_KEY_FILE
+

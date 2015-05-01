@@ -5,6 +5,6 @@
     apt: name=ansible state=present force=yes
     sudo: yes
 
-  - name: Create paas-boot directory
-    file: path=/home/ubuntu/paas-boot state=directory
+  - name: Clone/update the boot repo
+    git: repo=https://github.com/tilius/amazon-scala-paas.git dest=~/paas-repo
 
