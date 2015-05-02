@@ -17,5 +17,5 @@ ansible-playbook -i ansible_hosts_control master-start.yml
 scp -i $PRIVATE_KEY_FILE $PRIVATE_KEY_FILE $MASTER_USER_HOST:/home/ubuntu/ 2>/dev/null
 
 ssh -tt -o StrictHostKeyChecking=no -i $PRIVATE_KEY_FILE $MASTER_USER_HOST \
-	"ansible-playbook -i $MASTER_REPO_DIR/ansible_hosts_master $MASTER_REPO_DIR/slaves-start.yml"
+	"ansible-playbook -v -i $MASTER_REPO_DIR/ansible_hosts_master $MASTER_REPO_DIR/slaves-start.yml"
 

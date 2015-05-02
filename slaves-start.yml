@@ -21,5 +21,5 @@
     sudo: yes
     
   - name: Launch the service
-    shell: nohup sbt run & chdir=~/ws-repo
+    shell: sbt run & chdir=~/ws-repo
 
