@@ -13,5 +13,5 @@
     git: repo=https://github.com/tilius/amazon-scala-paas.git dest=/home/ubuntu/paas-repo
 
   - name: Disable host key checking
-    file: src=/home/ubuntu/paas-repo/ansible.cfg dest=/home/ubuntu/.ansible.cfg
+    command: creates=/home/ubuntu/.ansible.cfg cp /home/ubuntu/paas-repo/ansible.cfg /home/ubuntu/.ansible.cfg
 
