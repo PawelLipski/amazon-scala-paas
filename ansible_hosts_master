@@ -1,9 +1,7 @@
 
 [slaves-private]
 
-ubuntu@172.31.8.107 ansible_ssh_private_key_file=/home/ubuntu/aws-master-key.pem
+ubuntu@10.0.0.240 ansible_ssh_private_key_file=/home/ubuntu/aws-master-key.pem
 
-ubuntu@172.31.15.174 ansible_ssh_private_key_file=/home/ubuntu/aws-master-key.pem
-
-ubuntu@172.31.2.145 ansible_ssh_private_key_file=/home/ubuntu/aws-master-key.pem
+ubuntu@10.0.1.188 ansible_ssh_private_key_file=/home/ubuntu/aws-master-key.pem
 
