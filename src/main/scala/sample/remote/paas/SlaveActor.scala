@@ -1,4 +1,4 @@
-package sample.remote.calculator
+package sample.remote.paas
 
 import scala.concurrent.duration._
 import akka.actor.Actor
@@ -32,8 +32,8 @@ class SlaveActor(path: String) extends Actor {
   def active(actor: ActorRef): Actor.Receive = {
     case op: ReqMessage => actor ! op
     case result: ResMessage => result match {
-      case AddResult(n1, n2, r) =>
-        printf("Add result: %d + %d = %d\n", n1, n2, r)
+      case Adage(text) =>
+        println("%%% Master said: " + text + "\n")
     }
     case Terminated(`actor`) =>
       println("Master terminated")

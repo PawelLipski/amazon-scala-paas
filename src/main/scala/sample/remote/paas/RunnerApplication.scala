@@ -1,4 +1,4 @@
-package sample.remote.calculator
+package sample.remote.paas
 
 import scala.concurrent.duration._
 import scala.util.Random
@@ -10,8 +10,13 @@ object RunnerApplication {
   def main(args: Array[String]): Unit = {
     if (args.isEmpty || args.head == "Master")
       startRemoteMasterSystem()
-    if (args.isEmpty || args.head == "Slave")
-      startRemoteSlaveSystem()
+    if (args.isEmpty || args.head == "Slave"){
+      if (args.length > 1){
+        startRemoteSlaveSystem(args(1))
+      } else {
+        startRemoteSlaveSystem("127.0.0.1")
+      }
+    }
   }
 
   def startRemoteMasterSystem(): Unit = {
@@ -22,17 +27,18 @@ object RunnerApplication {
     println("Started MasterSystem - waiting for messages")
   }
 
-  def startRemoteSlaveSystem(): Unit = {
+  def startRemoteSlaveSystem(masterIP: String): Unit = {
     val system =
       ActorSystem("SlaveSystem", ConfigFactory.load("slave"))
-    val remotePath =
-      "akka.tcp://MasterSystem@127.0.0.1:2552/user/master"
-    val actor = system.actorOf(Props(classOf[SlaveActor], remotePath), "slave")
+    val remoteMasterPath =
+      "akka.tcp://MasterSystem@" + masterIP + ":2552/user/master"
+    val actor = system.actorOf(Props(classOf[SlaveActor], remoteMasterPath), "slave")
 
     println("Started SlaveSystem")
     import system.dispatcher
-    system.scheduler.schedule(1.second, 1.second) {
-      actor ! Add(Random.nextInt(100), Random.nextInt(100))
+    system.scheduler.schedule(1.second, 5.second) {
+      println("###Master, tell me something interesting please!\n")
+      actor ! TellMeSomethingMyMaster()
     }
   }
 }
