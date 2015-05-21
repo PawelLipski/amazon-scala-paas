@@ -9,6 +9,10 @@
     apt: name=git state=present force=yes
     sudo: yes
 
+  - name: Install fortune
+    apt: name=fortune state=present force=yes
+    sudo: yes
+
   - name: Clone/update the boot repo
     git: repo=https://github.com/tilius/amazon-scala-paas.git dest=/home/ubuntu/paas-repo
 
