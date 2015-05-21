@@ -6,7 +6,7 @@
     sudo: yes
 
   - name: Clone/update the repo
-    git: repo=https://github.com/tilius/amazon-scala-paas.git dest=~/paas-repo
+    git: repo=https://github.com/tilius/amazon-scala-paas.git dest=/home/ubuntu/paas-repo
 
   - name: Update apt source list
     shell: echo "deb http://dl.bintray.com/sbt/debian /" | 
