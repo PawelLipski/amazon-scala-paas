@@ -9,7 +9,7 @@
     apt: name=git state=present force=yes
     sudo: yes
 
-  - name: Clone/update the boot repo
+  - name: Clone/update the repo
     git: repo=https://github.com/tilius/amazon-scala-paas.git dest=/home/ubuntu/paas-repo
 
   - name: Disable host key checking
