@@ -17,7 +17,7 @@
     sudo: yes
 
   - name: Install OpenJDK
-    apt: name=openjdk-6-jdk state=present force=yes
+    apt: name=openjdk-7-jdk state=present force=yes
     sudo: yes
     
   #- name: Launch the service
