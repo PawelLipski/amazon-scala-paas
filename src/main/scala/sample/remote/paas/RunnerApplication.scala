@@ -1,4 +1,4 @@
-package sample.remote.calculator
+package sample.remote.paas
 
 import scala.concurrent.duration._
 import scala.util.Random
@@ -25,14 +25,14 @@ object RunnerApplication {
   def startRemoteSlaveSystem(): Unit = {
     val system =
       ActorSystem("SlaveSystem", ConfigFactory.load("slave"))
-    val remotePath =
+    val remoteMasterPath =
       "akka.tcp://MasterSystem@127.0.0.1:2552/user/master"
-    val actor = system.actorOf(Props(classOf[SlaveActor], remotePath), "slave")
+    val actor = system.actorOf(Props(classOf[SlaveActor], remoteMasterPath), "slave")
 
     println("Started SlaveSystem")
     import system.dispatcher
-    system.scheduler.schedule(1.second, 1.second) {
-      actor ! Add(Random.nextInt(100), Random.nextInt(100))
+    system.scheduler.schedule(1.second, 5.second) {
+      actor ! TellMeSomethingMyMaster()
     }
   }
 }

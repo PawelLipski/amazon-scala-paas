@@ -1,3 +1,4 @@
 ansible_hosts_control
-.idea
+.idea/
+.idea/*
 .iml
