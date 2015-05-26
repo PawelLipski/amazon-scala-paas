@@ -1,6 +1,8 @@
-package auctionhause.actors
+package auctionhause.actors.auction
 
-import akka.actor.{ActorSystem, ActorRef, Actor, FSM}
+import akka.actor.{Actor, ActorRef, ActorSystem, FSM}
+import auctionhause.actors._
+import auctionhause.actors.auction.StatesAndData._
 
 import scala.concurrent.duration._
 
@@ -9,7 +11,7 @@ import scala.concurrent.duration._
 /**
   * Created by bj on 21.10.14.
  */
-case class Auction(bidTime: FiniteDuration, deleteTime: FiniteDuration, system: ActorSystem, auctionSearchName: String) extends Actor with FSM[AuctionState, AuctionData]{
+case class VickeryAuction(bidTime: FiniteDuration, deleteTime: FiniteDuration, system: ActorSystem, auctionSearchName: String) extends Actor with FSM[AuctionState, AuctionData]{
 
   import system.dispatcher
 
@@ -103,26 +105,4 @@ case class Auction(bidTime: FiniteDuration, deleteTime: FiniteDuration, system: 
   }
 
 }
-
-sealed trait AuctionState
-
-sealed trait AuctionData
-
-case object Created extends AuctionState
-
-case object Activated extends AuctionState
-
-case object Ignored extends AuctionState
-
-case object Sold extends AuctionState
-
-case object NotInitialized extends AuctionState
-
-case object NotBiddedYet extends AuctionData
-
-case class Bidded(buyers: List[ActorRef], topBuyer: ActorRef, topPrice: Long) extends AuctionData
-
-case object NotCreatedYet extends AuctionData
-
-case object NotInitializedData extends AuctionData
 

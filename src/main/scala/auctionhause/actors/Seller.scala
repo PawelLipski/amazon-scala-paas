@@ -4,6 +4,7 @@ import java.util.Random
 
 import akka.actor._
 import auctionhause.AuctionProducts
+import auctionhause.actors.auction.EnglishAuction
 
 import scala.concurrent.duration._
 
@@ -29,7 +30,7 @@ class Seller(id: Int, system: ActorSystem, maxNumOfAuctions: Int, auctionSearchN
       val auctionsToBeActivated = rand.nextInt(maxNumOfAuctions)
       val auctionNames = createAuctionNames(auctionsToBeActivated)
       val filteredAuctionNames = auctionNames.distinct
-      val auctions = (0 to filteredAuctionNames.length - 1).map(num => context.actorOf(Props(new Auction(BID_TIME, DELETE_TIME, system, auctionSearchName)), filteredAuctionNames(num))).toList
+      val auctions = (0 to filteredAuctionNames.length - 1).map(num => context.actorOf(Props(new EnglishAuction(BID_TIME, DELETE_TIME, system, auctionSearchName)), filteredAuctionNames(num))).toList
       goto(Auctioning) using ActiveAuctions(auctions)
     }
   }
