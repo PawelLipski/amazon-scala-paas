@@ -1,0 +1,21 @@
+@(message: String, applications: List[(String, List[String])])
+
+    @helper.form(action = routes.Application.upload, 'enctype -> "multipart/form-data") {
+        <input type="file" name="picture">
+        <p>
+            <input type="submit">
+        </p>
+    }
+    <hr/>
+    <ul>
+    @applications.map{app =>
+        <li>
+            @app._1<br/>
+        <ul>
+        @app._2.map{clas =>
+            <li>@clas</li>
+        }
+        </ul>
+        </li>
+    }
+    </ul>

@@ -1,13 +1,18 @@
 name := "akka-sample-remote-scala"
 
-version := "2.3.10"
-
-scalaVersion := "2.10.4"
+version := "1.0-SNAPSHOT"
 
 resolvers += "Akka Snapshot Repository" at "http://repo.akka.io/snapshots/"
 
 libraryDependencies ++= Seq(
-  "com.typesafe.akka" % "akka-remote_2.10" % "2.3.11",
-  "com.typesafe.akka" % "akka-actor_2.10" % "2.3.11"
+  javaJdbc,
+  javaEbean,
+  jdbc,
+  anorm,
+  cache,
+  "com.typesafe.akka" % "akka-remote_2.10" % "2.2.3"
+  //"com.geekcap.informit.akka" % "akka-messages" % "1.0-SNAPSHOT"
 )
+     
+play.Project.playScalaSettings
 
