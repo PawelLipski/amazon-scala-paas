@@ -1,11 +1,11 @@
 package auctionhause.actors
 
 import java.util.Random
-
 import akka.actor.{Actor, ActorRef, ActorSystem, FSM}
 import auctionhause.AuctionProducts
-
 import scala.concurrent.duration._
+import akka.actor.actorRef2Scala
+import scala.language.postfixOps
 
 /**
  * Created by bj on 21.10.14.

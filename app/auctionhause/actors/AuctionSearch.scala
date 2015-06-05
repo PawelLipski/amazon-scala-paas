@@ -1,6 +1,7 @@
 package auctionhause.actors
 
 import akka.actor.{ActorRef, Actor, FSM}
+import akka.actor.actorRef2Scala
 
 /**
  * Created by bj on 04.11.14.

@@ -1,4 +1,4 @@
-package sample.remote.paas
+package paas
 
 trait ReqMessage
 

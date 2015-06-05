@@ -2,12 +2,11 @@ package controllers
 
 import java.io.{File, FileInputStream}
 import java.util.zip.ZipInputStream
-
+import play.api._
 import play.api.mvc._
-
 import scala.sys.process._
-
-import sample.remote.paas._
+import paas._
+import scala.language.postfixOps
 
 object Application extends Controller {
 
@@ -18,7 +17,6 @@ object Application extends Controller {
 
 
   def index = Action {
-    RunnerApplication.main(Array("Master"))
 
     val f = new java.io.File(s"${System.getProperty("user.home")}/jars/")
     f.mkdir
@@ -42,7 +40,7 @@ object Application extends Controller {
       if (f.exists() && !f.isDirectory() && !filename.endsWith(".jar")) {
         BadRequest("File not uploaded: " + filename)
       } else {
-        picture.ref.moveTo(f)
+        picture.ref.moveTo(f, true)
         slaves.foreach { slave =>
           copyViaSCP(f, slave, "aws-master-key.pem")
         }
@@ -63,8 +61,9 @@ object Application extends Controller {
       case withoutSlash => s"t$targetDirectory/${input.getName}"
     }
     try {
-      val output: String = s"scp -i $authKeypath ${input.getCanonicalPath} $targetFile" !!;
-      println(output)
+      val scpStr = s"scp -i $authKeypath ${input.getCanonicalPath} $targetFile"
+      val output: String = Process(scpStr).!!
+      Logger.info(output)
     } catch {
       case t: Throwable => println(t)
     }

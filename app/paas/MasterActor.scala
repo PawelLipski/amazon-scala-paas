@@ -1,4 +1,4 @@
-package sample.remote.paas
+package paas
 
 import akka.actor.Props
 import akka.actor.Actor

@@ -1,8 +1,12 @@
-name := "akka-sample-remote-scala"
+name := "amazon-app-platform"
 
 version := "1.0-SNAPSHOT"
 
 resolvers += "Akka Snapshot Repository" at "http://repo.akka.io/snapshots/"
+
+resolvers += Resolver.typesafeIvyRepo("releases")
+
+scalacOptions ++= Seq("-feature")
 
 libraryDependencies ++= Seq(
   javaJdbc,

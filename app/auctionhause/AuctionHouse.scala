@@ -2,7 +2,8 @@ package auctionhause
 
 import akka.actor.{Props, ActorSystem}
 import akka.event.Logging
-import auctionhause.actors.{HouseManager, OpenHouse}
+import auctionhause.actors.{OpenHouse}
+import auctionhause.actors.HouseManager
 
 /**
  * Created by bj on 21.10.14.

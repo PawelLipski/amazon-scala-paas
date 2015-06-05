@@ -1,4 +1,4 @@
-package sample.remote.paas
+package paas
 
 import scala.concurrent.duration._
 import akka.actor.Actor
