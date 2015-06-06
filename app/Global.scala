@@ -14,6 +14,7 @@ object Global extends GlobalSettings {
   }
 
   override def onStop(app: Application) {
+    RunnerApplication.stop
     Logger.info("Application shutdown...")
   }
 

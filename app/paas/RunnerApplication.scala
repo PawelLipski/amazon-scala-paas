@@ -5,8 +5,12 @@ import scala.util.Random
 import com.typesafe.config.ConfigFactory
 import akka.actor.ActorSystem
 import akka.actor.Props
+import scala.collection.mutable.MutableList
 
 object RunnerApplication {
+  
+  var systemObjects: MutableList[ActorSystem] = MutableList()
+  
   def main(args: Array[String]): Unit = {
     if (args.isEmpty || args.head == "Master")
       startRemoteMasterSystem()
@@ -19,10 +23,19 @@ object RunnerApplication {
     }
   }
 
+  def stop(): Unit = {
+    systemObjects.synchronized({
+        systemObjects.map(sys => sys.shutdown)
+        systemObjects.clear
+    })
+  }
+  
   def startRemoteMasterSystem(): Unit = {
     val system = ActorSystem("MasterSystem",
       ConfigFactory.load("master"))
-    system.actorOf(Props[MasterActor], "master")
+    systemObjects.synchronized(systemObjects += system)
+    
+    system.actorOf(Props[MasterControlActor], "master")
 
     println("Started MasterSystem - waiting for messages")
   }
@@ -30,9 +43,11 @@ object RunnerApplication {
   def startRemoteSlaveSystem(masterIP: String): Unit = {
     val system =
       ActorSystem("SlaveSystem", ConfigFactory.load("slave"))
+    systemObjects.synchronized(systemObjects += system)
+      
     val remoteMasterPath =
       "akka.tcp://MasterSystem@" + masterIP + ":2552/user/master"
-    val actor = system.actorOf(Props(classOf[SlaveActor], remoteMasterPath), "slave")
+    val actor = system.actorOf(Props(classOf[SlaveControlActor], remoteMasterPath), "slave")
 
     println("Started SlaveSystem")
     import system.dispatcher

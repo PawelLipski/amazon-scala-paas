@@ -4,7 +4,7 @@ import akka.actor.Props
 import akka.actor.Actor
 import sys.process._
 
-class MasterActor extends Actor {
+class MasterControlActor extends Actor {
   def receive = {
     case TellMeSomethingMyMaster() =>
       println("*** Sender " + sender.path + " is asking me to tell him something interesting:)!\n")

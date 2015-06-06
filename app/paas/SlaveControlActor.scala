@@ -8,7 +8,7 @@ import akka.actor.Identify
 import akka.actor.ReceiveTimeout
 import akka.actor.Terminated
 
-class SlaveActor(path: String) extends Actor {
+class SlaveControlActor(path: String) extends Actor {
 
   sendIdentifyRequest()
 
