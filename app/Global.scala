@@ -8,7 +8,7 @@ object Global extends GlobalSettings {
   override def onStart(app: Application) {
     Logger.info("Application has started")
     RunnerApplication.main(Array("Master"))
-    val str = s"mkdir -p /root/jars/"
+    val str = s"mkdir -p ${System.getProperty("user.home")}/jars/"
     if((Process(str) !) != 0)
       Logger.info("Error while creating jar directory")
   }
