@@ -65,7 +65,7 @@ object Application extends Controller {
       val output: String = Process(scpStr).!!
       Logger.info(output)
     } catch {
-      case t: Throwable => println(t)
+      case t: Throwable => Logger.error("SCP error", t)
     }
   }
 }

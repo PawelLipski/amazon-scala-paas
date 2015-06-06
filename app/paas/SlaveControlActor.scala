@@ -7,6 +7,7 @@ import akka.actor.ActorRef
 import akka.actor.Identify
 import akka.actor.ReceiveTimeout
 import akka.actor.Terminated
+import play.Logger
 
 class SlaveControlActor(path: String) extends Actor {
 
@@ -24,19 +25,19 @@ class SlaveControlActor(path: String) extends Actor {
     case ActorIdentity(`path`, Some(actor)) =>
       context.watch(actor)
       context.become(active(actor))
-    case ActorIdentity(`path`, None) => println(s"Remote actor not available: $path")
+    case ActorIdentity(`path`, None) => Logger.info(s"Remote actor not available: $path")
     case ReceiveTimeout              => sendIdentifyRequest()
-    case _                           => println("Not ready yet")
+    case _                           => Logger.info("Not ready yet")
   }
 
   def active(actor: ActorRef): Actor.Receive = {
     case op: ReqMessage => actor ! op
     case result: ResMessage => result match {
       case Adage(text) =>
-        println("%%% Master said: " + text + "\n")
+        Logger.info("%%% Master said: " + text + "\n")
     }
     case Terminated(`actor`) =>
-      println("Master terminated")
+      Logger.info("Master terminated")
       sendIdentifyRequest()
       context.become(identifying)
     case ReceiveTimeout =>

@@ -6,6 +6,7 @@ import com.typesafe.config.ConfigFactory
 import akka.actor.ActorSystem
 import akka.actor.Props
 import scala.collection.mutable.MutableList
+import play.Logger
 
 object RunnerApplication {
   
@@ -37,7 +38,7 @@ object RunnerApplication {
     
     system.actorOf(Props[MasterControlActor], "master")
 
-    println("Started MasterSystem - waiting for messages")
+    Logger.info("Started MasterSystem - waiting for messages")
   }
 
   def startRemoteSlaveSystem(masterIP: String): Unit = {
@@ -49,10 +50,10 @@ object RunnerApplication {
       "akka.tcp://MasterSystem@" + masterIP + ":2552/user/master"
     val actor = system.actorOf(Props(classOf[SlaveControlActor], remoteMasterPath), "slave")
 
-    println("Started SlaveSystem")
+    Logger.info("Started SlaveSystem")
     import system.dispatcher
     system.scheduler.schedule(1.second, 5.second) {
-      println("###Master, tell me something interesting please!\n")
+      Logger.info("###Master, tell me something interesting please!\n")
       actor ! TellMeSomethingMyMaster()
     }
   }
