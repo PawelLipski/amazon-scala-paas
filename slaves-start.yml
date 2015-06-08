@@ -20,6 +20,9 @@
     apt: name=openjdk-7-jdk state=present force=yes
     sudo: yes
     
+  - name: Create directory jars
+    file: path=/home/ubuntu/jars state=directory  
+    
   #- name: Launch the service
   #  shell: sbt run & chdir=~/ws-repo
 
