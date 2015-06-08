@@ -57,11 +57,12 @@ object Application extends Controller {
 
   def copyViaSCP(input: File, targetDirectory: String, authKeypath: String) = {
     val targetFile = targetDirectory match {
-      case withSlash if withSlash.endsWith("/") => s"t$targetDirectory${input.getName}"
-      case withoutSlash => s"t$targetDirectory/${input.getName}"
+      case withSlash if withSlash.endsWith("/") => s"$targetDirectory${input.getName}"
+      case withoutSlash => s"$targetDirectory/${input.getName}"
     }
     try {
       val scpStr = s"scp -i $authKeypath ${input.getCanonicalPath} $targetFile"
+      Logger.info(scpStr)
       val output: String = Process(scpStr).!!
       Logger.info(output)
     } catch {
