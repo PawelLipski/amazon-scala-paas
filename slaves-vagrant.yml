@@ -1,0 +1,30 @@
+- hosts: all
+  user: vagrant
+  sudo: yes
+  tasks:
+
+  - name: Install git
+    apt: name=git state=present force=yes
+    sudo: yes
+
+  - name: Clone/update the repo
+    git: repo=https://github.com/tilius/amazon-scala-paas.git dest=/home/ubuntu/paas-repo
+
+  - name: Update apt source list
+    shell: echo "deb http://dl.bintray.com/sbt/debian /" | 
+        sudo tee -a /etc/apt/sources.list.d/sbt.list ~/.apt.sbt.updated creates=~/.apt.sbt.updated
+
+  - name: Install sbt
+    apt: name=sbt state=present force=yes update_cache=yes
+    sudo: yes
+
+  - name: Install OpenJDK
+    apt: name=openjdk-7-jdk state=present force=yes
+    sudo: yes
+    
+  - name: Create directory jars
+    file: path=/home/ubuntu/jars state=directory owner=ubuntu
+    
+  #- name: Launch the service
+  #  shell: sbt run & chdir=~/ws-repo
+
