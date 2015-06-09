@@ -14,7 +14,8 @@ libraryDependencies ++= Seq(
   jdbc,
   anorm,
   cache,
-  "com.typesafe.akka" % "akka-remote_2.10" % "2.2.3"
+  "com.typesafe.akka" % "akka-remote_2.10" % "2.2.3",
+  "com.jsuereth" %% "scala-arm" % "1.4"
   //"com.geekcap.informit.akka" % "akka-messages" % "1.0-SNAPSHOT"
 )
      

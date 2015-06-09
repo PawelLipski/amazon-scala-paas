@@ -2,11 +2,12 @@ package auctionhause.actors
 
 import akka.actor.{ActorRef, Actor, FSM}
 import akka.actor.actorRef2Scala
+import paas.Agent
 
 /**
  * Created by bj on 04.11.14.
  */
-class AuctionSearch() extends Actor with FSM[AuctionSearchState, AuctionSearchData]{
+class AuctionSearch() extends Agent with FSM[AuctionSearchState, AuctionSearchData]{
 
   startWith(NotActivated, NoRegisteredAuctions)
 

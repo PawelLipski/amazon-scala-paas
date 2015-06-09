@@ -6,11 +6,12 @@ import auctionhause.AuctionProducts
 import auctionhause.actors.auction.EnglishAuction
 import scala.concurrent.duration._
 import scala.language.postfixOps
+import paas.Agent
 
 /**
  * Created by bj on 04.11.14.
  */
-class Seller(id: Int, system: ActorSystem, maxNumOfAuctions: Int, auctionSearchName: String) extends Actor with FSM[SellerState, SellerData] with AuctionProducts{
+class Seller(id: Int, system: ActorSystem, maxNumOfAuctions: Int, auctionSearchName: String) extends Agent with FSM[SellerState, SellerData] with AuctionProducts{
 
   val BID_TIME = 10 seconds
   val DELETE_TIME = 2 seconds

@@ -6,11 +6,12 @@ import auctionhause.AuctionProducts
 import scala.concurrent.duration._
 import akka.actor.actorRef2Scala
 import scala.language.postfixOps
+import paas.Agent
 
 /**
  * Created by bj on 21.10.14.
  */
-class Buyer(id: Int, system: ActorSystem) extends Actor with FSM[BuyerState, BuyerData] with AuctionProducts{
+class Buyer(id: Int, system: ActorSystem) extends Agent with FSM[BuyerState, BuyerData] with AuctionProducts{
 
   import system.dispatcher
 

@@ -3,15 +3,13 @@ package auctionhause.actors.auction
 import akka.actor.{Actor, ActorRef, ActorSystem, FSM}
 import auctionhause.actors._
 import auctionhause.actors.auction.StatesAndData._
-
 import scala.concurrent.duration._
-
-
+import paas.Agent
 
 /**
   * Created by bj on 21.10.14.
  */
-case class EnglishAuction(bidTime: FiniteDuration, deleteTime: FiniteDuration, system: ActorSystem, auctionSearchName: String) extends Actor with FSM[AuctionState, AuctionData]{
+case class EnglishAuction(bidTime: FiniteDuration, deleteTime: FiniteDuration, system: ActorSystem, auctionSearchName: String) extends Agent with FSM[AuctionState, AuctionData]{
 
   import system.dispatcher
 

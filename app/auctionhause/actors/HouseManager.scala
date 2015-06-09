@@ -1,12 +1,13 @@
 package auctionhause.actors
 
 import akka.actor._
+import paas.Agent
 
 /**
  * Created by bj on 21.10.14.
  */
 
-class HouseManager(system: ActorSystem) extends Actor with FSM[HouseState, HouseData]{
+class HouseManager(system: ActorSystem) extends Agent with FSM[HouseState, HouseData]{
   val MAX_NUM_OF_AUCTIONS = 1
   val NUM_OF_BUYERS = 2
   val NUM_OF_SELLERS = 1
