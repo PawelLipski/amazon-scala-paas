@@ -44,7 +44,12 @@ object Application extends Controller {
         x.getName -> List()
       }    	
     }
-    Ok(views.html.index("You can send your new application here.", data))
+    val indexedData = for {
+      jar <- data
+      result = jar._2.sorted zipWithIndex
+    } yield (jar._1, result)
+    
+    Ok(views.html.index("You can send your new application here.", indexedData))
   }
 
   def upload = Action(parse.multipartFormData) { request =>
@@ -69,7 +74,18 @@ object Application extends Controller {
     }
 
   }
-
+  
+  def launch = Action { request =>
+    val req = request.body.asFormUrlEncoded
+    if(req.isDefined) {
+      val values = req.get.map(v => (v._1, v._2(0)))
+      for(value <- values) {
+        println(value)
+      }
+      
+    }
+    Redirect("/");
+  }
 
   def copyViaSCP(input: File, targetDirectory: String, authKeypath: String) = {
     val targetFile = targetDirectory match {

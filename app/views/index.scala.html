@@ -1,21 +1,42 @@
-@(message: String, applications: List[(String, List[String])])
+@(message: String, applications: List[(String, List[(String, Int)])])
+<!DOCTYPE html>
+<html>
+    <head>
+    	<title>Agent Framework</title>
+        <link rel="stylesheet" href="@routes.Assets.at("stylesheets/main.css")">
+        <link rel="shortcut icon" type="image/png" href="@routes.Assets.at("images/favicon.png")">
+    </head>
+    <body>
+    	@message
+		<hr/>
+	    @helper.form(action = routes.Application.upload, 'enctype -> "multipart/form-data") {
+	        <input type="file" name="picture">
+	        <p>
+	            <input type="submit" value="Załaduj kod">
+	        </p>
+	    }
+		    <hr/>
+		    <ul>
+		@helper.form(action = routes.Application.launch, 'id -> "launch") {
+			<p>
+	            <input type="submit" value="Uruchom">
+	        </p>
+	        
+		    @applications.map{app =>
+		        <li>
+		            @app._1<br/>
+		        <ul>
+		        @app._2.map{clas =>
+		            <li>
+		            	<input type="number" name="@(app._1)&count@clas._2" min="0" step="1" value="0" size="2">
+		            	<p class="name" name="agent@clas._2"> @clas._1 </p>
+		            </li>
+		        }
+		        </ul>
+		        </li>
+		    }
+		    </ul>
+	    }
+    </body>
+</html>
 
-    @helper.form(action = routes.Application.upload, 'enctype -> "multipart/form-data") {
-        <input type="file" name="picture">
-        <p>
-            <input type="submit">
-        </p>
-    }
-    <hr/>
-    <ul>
-    @applications.map{app =>
-        <li>
-            @app._1<br/>
-        <ul>
-        @app._2.map{clas =>
-            <li>@clas</li>
-        }
-        </ul>
-        </li>
-    }
-    </ul>
