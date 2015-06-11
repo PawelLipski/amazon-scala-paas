@@ -22,9 +22,9 @@ class MasterControlActor extends Actor {
       for(slave <- slaves zipWithIndex) {
         val thread = new Thread(new Runnable {
 		  def run() {
-		    Process(s"ssh -i aws-master-key.pem $slave._1 killall java") ! ;
+		    Process("ssh -i aws-master-key.pem "+slave._1+" killall java") ! ;
 		    Thread.sleep(1000)
-		    Process(s"ssh -i aws-master-key.pem $slave._1 cd paas-repo; sbt start -mem 800 < /dev/null") !
+		    Process("ssh -i aws-master-key.pem "+slave._1+" cd paas-repo; sbt start -mem 800 < /dev/null") !
 		  }
 		})
         thread.start
