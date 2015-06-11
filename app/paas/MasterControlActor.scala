@@ -50,14 +50,15 @@ class MasterControlActor extends Actor {
     case ReadyToLaunch => 
       Logger.info("ReadyToLaunch")
       var taken = 0
-      var i = 0
       var toSent: MutableList[(String, Int)] = MutableList()
       val todo = perSlaveMin + takeOneOrNone(leftover)
+      
+      var i = 0
       while(taken != todo)
       {
         taken += Math.min(todo, params(i)._2)
-        for(i <- Range(1, taken))
-          toSent.+=((params(i)._1, i))
+        for(j <- Range(1, taken))
+          toSent.+=((params(i)._1, j))
         if(params(i)._2 >= todo)
         	params(i) = (params(i)._1, params(i)._2 - todo)
         else
