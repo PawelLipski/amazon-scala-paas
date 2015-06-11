@@ -15,13 +15,12 @@ import java.net.URL
 object Application extends Controller {
   
   val slaves = List(
-    "ubuntu@10.0.1.188:/home/ubuntu/jars/",
-    "ubuntu@10.0.1.221:/home/ubuntu/jars/"
+    "ubuntu@10.0.1.188",
+    "ubuntu@10.0.1.221"
   )
 
-
   def index = Action {
-    val f = new File(s"${System.getProperty("user.home")}/jars/")
+    val f = new File(s"${System.getProperty("user.home")}/paas-repo/lib/")
     f.mkdir
     val l = f.listFiles.filter(_.isFile).toList
     val data: List[(String, List[String])] = for {
@@ -57,12 +56,12 @@ object Application extends Controller {
       import java.io.File
       val filename = picture.filename
       val contentType = picture.contentType
-      val f = new File(s"${System.getProperty("user.home")}/jars/$filename")
+      val f = new File(s"${System.getProperty("user.home")}/paas-repo/lib/$filename")
       if (f.exists() && !f.isDirectory() && !filename.endsWith(".jar")) {
         BadRequest("File not uploaded: " + filename)
       } else {
         picture.ref.moveTo(f, true)
-        slaves.foreach { slave =>
+        slaves.map(slave => slave+":~/paas-repo/lib/").foreach { slave =>
           copyViaSCP(f, slave, "aws-master-key.pem")
         }
         Ok("File uploaded: " + filename)
@@ -78,11 +77,8 @@ object Application extends Controller {
   def launch = Action { request =>
     val req = request.body.asFormUrlEncoded
     if(req.isDefined) {
-      val values = req.get.map(v => (v._1, v._2(0)))
-      for(value <- values) {
-        println(value)
-      }
-      
+      val values = req.get.map(v => (v._1, v._2(0).toInt))
+      RunnerApplication.issueActionToMaster(slaves, values)
     }
     Redirect("/");
   }

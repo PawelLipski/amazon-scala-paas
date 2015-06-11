@@ -21,8 +21,10 @@
     sudo: yes
     
   - name: Create directory jars
-    file: path=/home/ubuntu/jars state=directory  
+    file: path=/home/ubuntu/paas-repo/lib/ state=directory  
     
-  #- name: Launch the service
-  #  shell: sbt run & chdir=~/ws-repo
+  - name: Launch the service
+    shell: nohup sbt run 1>/dev/null 2>&1 &
+    args:
+        chdir: ~/paas-repo
 

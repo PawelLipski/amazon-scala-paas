@@ -8,3 +8,4 @@ trait ResMessage
 
 case class Adage(text: String) extends ResMessage
 
+case class Launch(slaves: List[String], values: Map[String, Int])

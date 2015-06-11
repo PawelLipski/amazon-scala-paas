@@ -10,7 +10,7 @@ import play.Logger
 
 object RunnerApplication {
   
-  var systemObjects: MutableList[ActorSystem] = MutableList()
+  var system: Option[ActorSystem] = None
   
   def main(args: Array[String]): Unit = {
     if (args.isEmpty || args.head == "Master")
@@ -25,16 +25,16 @@ object RunnerApplication {
   }
 
   def stop(): Unit = {
-    systemObjects.synchronized({
-        systemObjects.map(sys => sys.shutdown)
-        systemObjects.clear
-    })
+    if(system.isDefined) {
+      system.get.shutdown
+      system = None
+    }
   }
   
   def startRemoteMasterSystem(): Unit = {
     val system = ActorSystem("MasterSystem",
       ConfigFactory.load("master"))
-    systemObjects.synchronized(systemObjects += system)
+    this.system = Some(system)
     
     system.actorOf(Props[MasterControlActor], "master")
 
@@ -44,7 +44,7 @@ object RunnerApplication {
   def startRemoteSlaveSystem(masterIP: String): Unit = {
     val system =
       ActorSystem("SlaveSystem", ConfigFactory.load("slave"))
-    systemObjects.synchronized(systemObjects += system)
+    this.system = Some(system)
       
     val remoteMasterPath =
       "akka.tcp://MasterSystem@" + masterIP + ":2552/user/master"
@@ -54,7 +54,16 @@ object RunnerApplication {
     import system.dispatcher
     system.scheduler.schedule(1.second, 5.second) {
       Logger.info("###Master, tell me something interesting please!\n")
-      actor ! TellMeSomethingMyMaster()
+      actor ! TellMeSomethingMyMaster
+    }
+  }
+  
+  def issueActionToMaster(slaves: List[String], values: Map[String, Int]) {
+    val master = this.system.find(system => system.name == "MasterSystem")  
+    if(master.isDefined) {
+      val system = master.get
+      val ref = system.actorSelection("/user/master")
+      ref ! Launch(slaves, values)
     }
   }
 }

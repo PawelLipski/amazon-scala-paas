@@ -9,6 +9,8 @@
 
   - name: Clone/update the repo
     git: repo=https://github.com/tilius/amazon-scala-paas.git dest=/home/ubuntu/paas-repo
+    sudo: yes
+    sudo_user: ubuntu
 
   - name: Update apt source list
     shell: echo "deb http://dl.bintray.com/sbt/debian /" | 
@@ -23,8 +25,13 @@
     sudo: yes
     
   - name: Create directory jars
-    file: path=/home/ubuntu/jars state=directory owner=ubuntu
+    file: path=~/paas-repo/lib/ state=directory
+    sudo: yes
+    sudo_user: ubuntu
     
-  #- name: Launch the service
-  #  shell: sbt run & chdir=~/ws-repo
-
+  - name: Launch the service
+    shell: nohup sbt run 1>/dev/null 2>&1 &
+    args:
+        chdir: ~/paas-repo
+    sudo: yes
+    sudo_user: ubuntu
