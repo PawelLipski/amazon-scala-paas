@@ -22,9 +22,6 @@ class SlaveControlActor(path: String) extends Actor {
   def receive = identifying
 
   def identifying: Actor.Receive = {
-	case TellMeSomethingMyMaster =>
-		Logger.info("ping!")
-		Logger.info("*** Sender " + sender.path + " is asking me to tell him something interesting:)!\n")
     
     case ActorIdentity(`path`, Some(actor)) =>
       context.watch(actor)

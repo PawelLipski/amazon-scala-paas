@@ -26,10 +26,9 @@ class MasterControlActor extends Actor {
       
     
     case TellMeSomethingMyMaster =>
-      Logger.info("ping!")
       Logger.info("*** Sender " + sender.path + " is asking me to tell him something interesting:)!\n")
-      val adage = Process("fortune") !! ;
-      sender ! Adage(adage)
+      Logger.info(self.path.toString())
+      sender ! self.path
   }
 }
 
