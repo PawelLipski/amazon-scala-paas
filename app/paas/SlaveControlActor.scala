@@ -29,7 +29,7 @@ class SlaveControlActor(masterPath: String) extends Actor {
         (context.actorOf(
             Props(Class.forName(agent._1)), "s"+agent._2), agent._2))
       for(agent <- agentSpec)
-    	  Logger.info(agent._1.split(".").last+agent._2)
+    	  Logger.info(agent._1.split(".").toString+agent._2)
         //agent._1.split(".").last+agent._2)
             
             
