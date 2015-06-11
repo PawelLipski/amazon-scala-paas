@@ -81,11 +81,11 @@ object RunnerApplication {
                   ips.find(ip => ip.startsWith("10.0.1")).get)))
     this.system = Some(system)
       
-    system.actorOf(Props[MasterControlActor], "slavetest")
+    
     
     val remoteMasterPath =
       "akka.tcp://MasterSystem@" + masterIP + ":2552/user/master"
-    val actor = system.actorOf(Props(classOf[SlaveControlActor], remoteMasterPath), "slave")
+    val actor = system.actorOf(Props(classOf[MasterControlActor], remoteMasterPath), "slave")
 
     Logger.info("Started SlaveSystem")
     import system.dispatcher
