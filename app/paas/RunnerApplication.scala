@@ -10,6 +10,9 @@ import play.Logger
 import com.typesafe.config.ConfigValueFactory
 import java.net.NetworkInterface
 import scala.collection.JavaConversions._
+import akka.actor.Deploy
+import akka.remote.RemoteScope
+import akka.actor.AddressFromURIString
 
 object RunnerApplication {
   
@@ -80,17 +83,21 @@ object RunnerApplication {
               ConfigValueFactory.fromAnyRef(
                   ips.find(ip => ip.startsWith("10.0.1")).get)))
     this.system = Some(system)
-      
-    
     
     val remoteMasterPath =
-      "akka.tcp://MasterSystem@" + masterIP + ":2552/user/master"
-    val actor = system.actorOf(Props(classOf[SlaveControlActor], remoteMasterPath), "slave")
+      "akka.tcp://MasterSystem@" + masterIP + ":2552/user/master"+
+    		  ips.find(ip => ip.startsWith("10.0.1")).get
+    
+    val actor = system.actorOf(Props[MasterControlActor].withDeploy
+        (Deploy(scope = RemoteScope(AddressFromURIString(remoteMasterPath))))
+    , ips.find(ip => ip.startsWith("10.0.1")).get)
 
     Logger.info("Started SlaveSystem")
+    
     import system.dispatcher
     system.scheduler.schedule(1.second, 5.second) {
-      Logger.info("###Master, tell me something interesting please!\n")
+      Logger.info("## Master "+ips.find(ip => ip.startsWith("10.0.1")).get+
+          " , tell me something interesting please!\n")
       actor ! TellMeSomethingMyMaster
     }
   }
