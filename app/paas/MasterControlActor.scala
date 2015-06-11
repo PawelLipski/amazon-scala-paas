@@ -41,14 +41,11 @@ class MasterControlActor extends Actor {
       Logger.info("ReadyToLaunch")
       
       val org = slaveAgents.length
-      slaveAgents.synchronized({
-        if(!slaveAgents.exists(ag => ag == sender)) {
+      if(!slaveAgents.exists(ag => ag == sender)) {
           slaveAgents += sender
-        }
-          
-      })
+      }
       
-      if(org == slaveAgents.length)
+      if((org == slaveAgents.length) || (slaveAgents.exists(ag => ag == sender)))
         context.become(receive)
       else {
 	      var taken = 0
@@ -61,9 +58,9 @@ class MasterControlActor extends Actor {
 	      while(taken != todo)
 	      {
 	        Logger.debug("i: "+i)
-	        taken += Math.min(todo, params(i)._2)
+	        taken += Math.min(todo-taken, params(i)._2)
 	        Logger.debug("params(i)._2: "+params(i)._2)
-	        Logger.debug("taken: "+Math.min(todo, params(i)._2))
+	        Logger.debug("taken: "+Math.min(todo-taken, params(i)._2))
 	        for(j <- Range(0, Math.min(todo, params(i)._2)))
 	          toSent.+=((params(i)._1, j+1))
 	        if(params(i)._2 >= todo)
