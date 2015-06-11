@@ -6,8 +6,6 @@ import auctionhause.actors.auction.StatesAndData._
 import scala.concurrent.duration._
 import paas.Agent
 
-
-
 /**
   * Created by bj on 21.10.14.
  */

@@ -5,7 +5,7 @@ import akka.actor.Actor
 
 trait Agent extends Actor {
   
-	final def receive = {
+	def receive = {
 		case Run(num) => run(num)
 		case ShowState => sender ! state
 		case any => getMessage(any)
