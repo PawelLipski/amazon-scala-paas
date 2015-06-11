@@ -34,14 +34,14 @@
     ignore_errors: yes
     
   - name: Prepare the service
-    shell: sbt clean stage
+    shell: sbt clean stage -mem 800
     args:
         chdir: ~/paas-repo
     sudo: yes
     sudo_user: ubuntu
     
   - name: Launch the service
-    command: nohup sbt start
+    command: nohup sbt start -mem 800
     args:
         chdir: ~/paas-repo
     sudo: yes
