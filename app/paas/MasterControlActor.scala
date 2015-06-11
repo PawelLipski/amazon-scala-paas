@@ -30,7 +30,7 @@ class MasterControlActor extends Actor {
 		})
         thread.start
       }
-      Thread.sleep(3000)
+      Thread.sleep(10000)
       context.become(active(MutableList(params.toList:_*), perSlaveMin, leftover))
   
     case LaunchResult(refs) => registerLanuched(refs)
