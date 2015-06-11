@@ -6,7 +6,7 @@
   - name: Install git
     apt: name=git state=present force=yes
     sudo: yes
-
+    
   - name: Clone/update the repo
     git: repo=https://github.com/tilius/amazon-scala-paas.git dest=/home/ubuntu/paas-repo
     sudo: yes
@@ -29,8 +29,19 @@
     sudo: yes
     sudo_user: ubuntu
     
+  - name: Stop service
+    command: killall java
+    ignore_errors: yes
+    
+  - name: Prepare the service
+    shell: sbt clean stage
+    args:
+        chdir: ~/paas-repo
+    sudo: yes
+    sudo_user: ubuntu
+    
   - name: Launch the service
-    shell: nohup sbt run 1>/dev/null 2>&1 &
+    command: nohup sbt start
     args:
         chdir: ~/paas-repo
     sudo: yes

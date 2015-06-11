@@ -25,9 +25,15 @@
     
   - name: Shutdown the service
     command: killall -TERM java  
+    ignore_errors: yes
+  
+  - name: Prepare the service
+    shell: sbt clean stage
+    args:
+        chdir: ~/paas-repo
     
   - name: Launch the service
-    shell: nohup sbt run 1>/dev/null 2>&1 &
+    shell: nohup sbt start
     args:
         chdir: ~/paas-repo
 
