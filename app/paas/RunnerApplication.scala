@@ -77,16 +77,16 @@ object RunnerApplication {
     	address <- interface.getInetAddresses()) 
       yield address.getHostAddress()   
     
+    val ip = ips.find(ip => ip.startsWith("10.0.1")).get
+      
     val system =
       ActorSystem("SlaveSystem", ConfigFactory.load("slave").
           withValue("remote.netty.tcp.hostname", 
-              ConfigValueFactory.fromAnyRef(
-                  ips.find(ip => ip.startsWith("10.0.1")).get)))
+              ConfigValueFactory.fromAnyRef(ip)))
     this.system = Some(system)
     
     val remoteMasterPath =
-      "akka.tcp://MasterSystem@" + masterIP + ":2552/user/master"+
-    		  ips.find(ip => ip.startsWith("10.0.1")).get
+      "akka.tcp://MasterSystem@" + masterIP + ":2552/user/master"+ip
     
     val actor = system.actorOf(Props[MasterControlActor].withDeploy
         (Deploy(scope = RemoteScope(AddressFromURIString(remoteMasterPath))))
