@@ -60,10 +60,11 @@ class MasterControlActor extends Actor {
 	      while(taken != todo)
 	      {
 	        Logger.debug("i: "+i)
-	        taken += Math.min(todo-taken, params(i)._2)
+	        val choice = Math.min(todo-taken, params(i)._2)
+	        taken += choice
 	        Logger.debug("params(i)._2: "+params(i)._2)
-	        Logger.debug("taken: "+Math.min(todo-taken, params(i)._2))
-	        for(j <- Range(0, Math.min(todo, params(i)._2)))
+	        Logger.debug("taken: "+choice)
+	        for(j <- Range(0, choice))
 	          toSent.+=((params(i)._1, j+1))
 	        if(params(i)._2 >= todo)
 	        	params(i) = (params(i)._1, params(i)._2 - todo)
@@ -72,6 +73,7 @@ class MasterControlActor extends Actor {
 	        i += 1
 	      }
 	      
+	      Logger.debug(toSent.toList.toString)
 	      sender ! LaunchRequest(toSent.toList) 
 	      
 	      if(leftover > 0)
