@@ -90,13 +90,13 @@ object RunnerApplication {
     
     val actor = system.actorOf(Props[MasterControlActor].withDeploy
         (Deploy(scope = RemoteScope(AddressFromURIString(remoteMasterPath))))
-    , ips.find(ip => ip.startsWith("10.0.1")).get)
+    , ip)
 
     Logger.info("Started SlaveSystem")
     
     import system.dispatcher
     system.scheduler.schedule(1.second, 5.second) {
-      Logger.info("## Master "+ips.find(ip => ip.startsWith("10.0.1")).get+
+      Logger.info("## Master "+ip+
           " , tell me something interesting please!\n")
       actor ! TellMeSomethingMyMaster
     }
