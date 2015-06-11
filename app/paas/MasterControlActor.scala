@@ -10,10 +10,11 @@ import akka.actor.ActorRef
 
 class MasterControlActor extends Actor {
   
-  var agents: MutableList[ActorRef] = MutableList()
-  var slaveAgents: MutableList[ActorRef] = MutableList()
+  var launchedAgents: MutableList[ActorRef] = MutableList()
+  var currentAgents: MutableList[ActorRef] = MutableList()
   
   def receive = {
+    
     
     case Launch(slaves, params) =>
       Logger.info("Launch")
@@ -21,41 +22,42 @@ class MasterControlActor extends Actor {
       val perSlaveMin = agentNumber / slaves.length
       val leftover = agentNumber % slaves.length
       
-      context.become(active(MutableList(params.toList:_*), perSlaveMin, leftover))
+      context.become(active(slaves.length, MutableList(params.toList:_*), perSlaveMin, leftover))
   
     case LaunchResult(refs) => registerLaunched(refs)
       
   }
   
   def registerLaunched(refs: List[ActorRef]) {
-    Logger.info("Launch Sucess! " + refs.toString)
-    agents.synchronized(agents ++= refs)   
+    Logger.info("Launch Success! " + refs.toString)
+    launchedAgents.synchronized(launchedAgents ++= refs)   
   }
   
   def takeOneOrNone(sum: Int) = if(sum > 0) 1 else 0
   
-  def active(params: MutableList[(String, Int)], perSlaveMin: Int, leftover: Int): 
+  def active(slaveCount: Int, params: MutableList[(String, Int)], perSlaveMin: Int, leftover: Int): 
 	  Actor.Receive = {
     
     case ReadyToLaunch => 
-      Logger.info("ReadyToLaunch")
+      Logger.info("got ReadyToLaunch")
       
       var isNew = false
-      val org = slaveAgents.length
-      if(!slaveAgents.exists(ag => ag == sender)) {
-          slaveAgents += sender
+      if(!currentAgents.exists(ag => ag == sender)) {
+          currentAgents += sender
           isNew = true
       }
       
-      if(org == slaveAgents.length)
-      	context.become(receive)
-      else if (isNew) {
+      if((currentAgents.length == slaveCount) && !isNew) {
+        currentAgents.clear
+        context.become(receive)
+      } else if (isNew) {
 	      var taken = 0
 	      var toSent: MutableList[(String, Int)] = MutableList()
 	      val todo = perSlaveMin + takeOneOrNone(leftover)
 	      
 	      Logger.debug("Params: "+params)
 	      Logger.debug("TODO: "+todo)
+	      
 	      var i = 0
 	      while(taken != todo)
 	      {
@@ -76,10 +78,15 @@ class MasterControlActor extends Actor {
 	      Logger.debug(toSent.toList.toString)
 	      sender ! LaunchRequest(toSent.toList) 
 	      
+	      if(currentAgents.length == slaveCount) {
+	    	  currentAgents.clear
+		  	  context.become(receive)
+	      }
+	      
 	      if(leftover > 0)
-	    	  context.become(active(params, perSlaveMin, leftover-1))
+	    	  context.become(active(slaveCount, params, perSlaveMin, leftover-1))
 	      else
-	    	  context.become(active(params, perSlaveMin, 0))
+	    	  context.become(active(slaveCount, params, perSlaveMin, 0))
       }
      case LaunchResult(refs) => registerLaunched(refs)
      
