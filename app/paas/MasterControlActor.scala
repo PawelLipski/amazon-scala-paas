@@ -80,7 +80,7 @@ class MasterControlActor extends Actor {
 	      else
 	    	  context.become(active(params, perSlaveMin, 0))
       }
-     case LaunchResult(refs) => registerLanuched(refs)
+     case LaunchResult(refs) => registerLaunched(refs)
      
   }
 }
