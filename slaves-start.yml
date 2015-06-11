@@ -33,7 +33,7 @@
         chdir: ~/paas-repo
     
   - name: Launch the service
-    shell: nohup sbt start -mem 800
+    shell: sbt start -mem 800 < /dev/null
     args:
         chdir: ~/paas-repo
 
