@@ -15,6 +15,7 @@ class SlaveControlActor(masterPath: String) extends Actor {
   sendReadyToLaunch()
 
   def sendReadyToLaunch(): Unit = {
+    Logger.info("sendReadyToLaunch")
     context.actorSelection(masterPath) ! ReadyToLaunch
     import context.dispatcher
     context.system.scheduler.scheduleOnce(3.seconds, self, ReceiveTimeout)
@@ -22,6 +23,7 @@ class SlaveControlActor(masterPath: String) extends Actor {
 
   def receive = {
     case LaunchRequest(agentSpec) =>
+      Logger.info("LaunchRequest")
       val agents = agentSpec.map(agent => 
         (context.actorOf(Props(Class.forName(agent._1)), agent._1.split(".").last+agent._2), agent._2))
       for(agent <- agents)

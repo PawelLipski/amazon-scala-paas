@@ -15,6 +15,7 @@ class MasterControlActor extends Actor {
   def receive = {
     
     case Launch(slaves, params) =>
+      Logger.info("Launch")
       val agentNumber = params.map(m => m._2).sum
       val perSlaveMin = agentNumber / slaves.length
       val leftover = agentNumber % slaves.length
@@ -29,6 +30,7 @@ class MasterControlActor extends Actor {
 		})
         thread.start
       }
+      Thread.sleep(3000)
       context.become(active(MutableList(params.toList:_*), perSlaveMin, leftover))
   
     case LaunchResult(refs) => registerLanuched(refs)
@@ -36,6 +38,7 @@ class MasterControlActor extends Actor {
   }
   
   def registerLanuched(refs: List[ActorRef]) {
+    Logger.info("Launch Sucess! " + refs.toString)
     agents.synchronized(agents ++= refs)   
   }
   
@@ -45,7 +48,7 @@ class MasterControlActor extends Actor {
 	  Actor.Receive = {
     
     case ReadyToLaunch => 
-      
+      Logger.info("ReadyToLaunch")
       var taken = 0
       var i = 0
       var toSent: MutableList[(String, Int)] = MutableList()
