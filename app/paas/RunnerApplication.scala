@@ -75,10 +75,8 @@ object RunnerApplication {
     this.system = Some(system)
     Logger.info("Started SlaveSystem")
     
-    system.actorOf(Props[SlaveControlActor], "slave")
-    
-    /*val remoteMasterPath =
-      "akka.tcp://MasterSystem@" + masterIP + ":2552/user/master"+ip
+    system.actorOf(Props(classOf[SlaveControlActor], 
+        "akka.tcp://MasterSystem@" + masterIP + ":2552/user/master"), "slave")
     
     val actor = system.actorOf(Props[MasterControlActor].withDeploy
         (Deploy(scope = RemoteScope(AddressFromURIString(remoteMasterPath))))
