@@ -40,14 +40,16 @@ class MasterControlActor extends Actor {
     case ReadyToLaunch => 
       Logger.info("ReadyToLaunch")
       
+      var isNew = false
       val org = slaveAgents.length
       if(!slaveAgents.exists(ag => ag == sender)) {
           slaveAgents += sender
+          isNew = true
       }
       
-      if((org == slaveAgents.length) || (slaveAgents.exists(ag => ag == sender)))
-        context.become(receive)
-      else {
+      if(org == slaveAgents.length)
+      	context.become(receive)
+      else if (isNew) {
 	      var taken = 0
 	      var toSent: MutableList[(String, Int)] = MutableList()
 	      val todo = perSlaveMin + takeOneOrNone(leftover)
