@@ -11,6 +11,7 @@ import akka.actor.ActorRef
 class MasterControlActor extends Actor {
   
   var agents: MutableList[ActorRef] = MutableList()
+  var slaveAgents: MutableList[ActorRef] = MutableList()
   
   def receive = {
     
@@ -39,38 +40,46 @@ class MasterControlActor extends Actor {
     case ReadyToLaunch => 
       Logger.info("ReadyToLaunch")
       
-      if(params.last._2 == 0)
+      val org = slaveAgents.length
+      slaveAgents.synchronized({
+        if(!slaveAgents.exists(ag => ag == sender)) {
+          slaveAgents += sender
+        }
+          
+      })
+      
+      if((params.last._2 == 0) || (org == slaveAgents.length))
         context.become(receive)
-      
-      var taken = 0
-      var toSent: MutableList[(String, Int)] = MutableList()
-      val todo = perSlaveMin + takeOneOrNone(leftover)
-      
-      Logger.debug("Params: "+params)
-      Logger.debug("TODO: "+todo)
-      var i = 0
-      while(taken != todo)
-      {
-        Logger.debug("i: "+i)
-        taken += Math.min(todo, params(i)._2)
-        Logger.debug("params(i)._2: "+params(i)._2)
-        Logger.debug("taken: "+Math.min(todo, params(i)._2))
-        for(j <- Range(0, Math.min(todo, params(i)._2)))
-          toSent.+=((params(i)._1, j+1))
-        if(params(i)._2 >= todo)
-        	params(i) = (params(i)._1, params(i)._2 - todo)
-        else
-        	params(i) = (params(i)._1, 0) 
-        i += 1
+      else {
+	      var taken = 0
+	      var toSent: MutableList[(String, Int)] = MutableList()
+	      val todo = perSlaveMin + takeOneOrNone(leftover)
+	      
+	      Logger.debug("Params: "+params)
+	      Logger.debug("TODO: "+todo)
+	      var i = 0
+	      while(taken != todo)
+	      {
+	        Logger.debug("i: "+i)
+	        taken += Math.min(todo, params(i)._2)
+	        Logger.debug("params(i)._2: "+params(i)._2)
+	        Logger.debug("taken: "+Math.min(todo, params(i)._2))
+	        for(j <- Range(0, Math.min(todo, params(i)._2)))
+	          toSent.+=((params(i)._1, j+1))
+	        if(params(i)._2 >= todo)
+	        	params(i) = (params(i)._1, params(i)._2 - todo)
+	        else
+	        	params(i) = (params(i)._1, 0) 
+	        i += 1
+	      }
+	      
+	      sender ! LaunchRequest(toSent.toList) 
+	      
+	      if(leftover > 0)
+	    	  context.become(active(params, perSlaveMin, leftover-1))
+	      else
+	    	  context.become(active(params, perSlaveMin, 0))
       }
-      
-      sender ! LaunchRequest(toSent.toList) 
-      
-      if(leftover > 0)
-    	  context.become(active(params, perSlaveMin, leftover-1))
-      else
-    	  context.become(active(params, perSlaveMin, 0))
-     
      case LaunchResult(refs) => registerLanuched(refs)
      
   }
