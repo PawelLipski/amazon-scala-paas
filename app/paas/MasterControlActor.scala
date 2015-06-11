@@ -23,11 +23,11 @@ class MasterControlActor extends Actor {
       
       context.become(active(MutableList(params.toList:_*), perSlaveMin, leftover))
   
-    case LaunchResult(refs) => registerLanuched(refs)
+    case LaunchResult(refs) => registerLaunched(refs)
       
   }
   
-  def registerLanuched(refs: List[ActorRef]) {
+  def registerLaunched(refs: List[ActorRef]) {
     Logger.info("Launch Sucess! " + refs.toString)
     agents.synchronized(agents ++= refs)   
   }
@@ -48,7 +48,7 @@ class MasterControlActor extends Actor {
           
       })
       
-      if((params.last._2 == 0) || (org == slaveAgents.length))
+      if(org == slaveAgents.length)
         context.become(receive)
       else {
 	      var taken = 0
