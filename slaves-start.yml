@@ -28,12 +28,12 @@
     ignore_errors: yes
   
   - name: Prepare the service
-    shell: sbt clean stage -mem 800
+    shell: sbt stage -mem 800
     args:
         chdir: ~/paas-repo
     
   - name: Launch the service
-    shell: sbt start -mem 800 < /dev/null
+    shell: nohup sbt start -mem 800
     args:
         chdir: ~/paas-repo
 
