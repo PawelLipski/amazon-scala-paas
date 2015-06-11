@@ -25,7 +25,11 @@ class SlaveControlActor(masterPath: String) extends Actor {
     case LaunchRequest(agentSpec) =>
       Logger.info("LaunchRequest")
       val agents = agentSpec.map(agent => 
-        (context.actorOf(Props(Class.forName(agent._1)), agent._1.split(".").last+agent._2), agent._2))
+        (context.actorOf(
+            Props(Class.forName(agent._1)),
+            	agent._1.split(".").last+agent._2), agent._2))
+            
+            
       for(agent <- agents)
         agent._1 ! Run(agent._2)
         
