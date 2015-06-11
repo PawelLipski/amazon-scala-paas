@@ -55,18 +55,7 @@ object RunnerApplication {
     this.system = Some(system)
     
     system.actorOf(Props[MasterControlActor], "master")
-
     Logger.info("Started MasterSystem - waiting for messages")
-    
-    val remoteMasterPath =
-      "akka.tcp://SlaveSystem@10.0.1.188:2553/user/slavetest"
-    //val actor = system.actorOf(Props(classOf[SlaveControlActor], remoteMasterPath), "slave1")
- 
-    import system.dispatcher
-    /*system.scheduler.schedule(1.second, 5.second) {
-      Logger.info("###Slave, tell me something interesting please!\n")
-      actor ! TellMeSomethingMyMaster
-    }  */
       
   }
 
@@ -94,12 +83,17 @@ object RunnerApplication {
 
     Logger.info("Started SlaveSystem")
     
+    val selection =
+      system.actorSelection("akka.tcp://MasterSystem@" + masterIP + ":2552/user/master")
+    
     import system.dispatcher
-    system.scheduler.schedule(1.second, 5.second) {
-      Logger.info("## Master "+ip+
-          " , tell me something interesting please!\n")
+    system.scheduler.schedule(1.second, 10.second) {
+      Logger.info("@"+ip+" Remote Deployed Master tell me something interesting please!\n")
       actor ! TellMeSomethingMyMaster
+      
+      selection ! TellMeSomethingMyMaster
     }
+    
   }
   
   def issueActionToMaster(slaves: List[String], values: Map[String, Int]) {
