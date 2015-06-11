@@ -23,6 +23,9 @@
   - name: Create directory jars
     file: path=/home/ubuntu/paas-repo/lib/ state=directory  
     
+  - name: Shutdown the service
+    command: killall -TERM java  
+    
   - name: Launch the service
     shell: nohup sbt run 1>/dev/null 2>&1 &
     args:
