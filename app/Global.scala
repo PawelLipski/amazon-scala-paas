@@ -18,7 +18,7 @@ object Global extends GlobalSettings {
       yield address.getHostAddress()
     
     if(ips.exists(ip => ip == masterIP))
-	  RunnerApplication.main(Array("Master"))
+	  RunnerApplication.main(Array("Master", masterIP))
     else 
       RunnerApplication.main(Array("Slave", masterIP))
     

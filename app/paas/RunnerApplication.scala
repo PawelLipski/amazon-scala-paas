@@ -7,6 +7,9 @@ import akka.actor.ActorSystem
 import akka.actor.Props
 import scala.collection.mutable.MutableList
 import play.Logger
+import com.typesafe.config.ConfigValueFactory
+import java.net.NetworkInterface
+import scala.collection.JavaConversions._
 
 object RunnerApplication {
   
@@ -14,7 +17,11 @@ object RunnerApplication {
   
   def main(args: Array[String]): Unit = {
     if (args.isEmpty || args.head == "Master")
-      startRemoteMasterSystem()
+      if (args.length > 1){
+        startRemoteMasterSystem(args(1))
+      } else {
+        startRemoteMasterSystem("127.0.0.1")
+      }
     if (args.isEmpty || args.head == "Slave"){
       if (args.length > 1){
         startRemoteSlaveSystem(args(1))
@@ -31,7 +38,7 @@ object RunnerApplication {
     }
   }
   
-  def startRemoteMasterSystem(): Unit = {
+  def startRemoteMasterSystem(masterIP: String): Unit = {
     val system = ActorSystem("MasterSystem",
       ConfigFactory.load("master"))
     this.system = Some(system)
@@ -42,8 +49,17 @@ object RunnerApplication {
   }
 
   def startRemoteSlaveSystem(masterIP: String): Unit = {
+   
+    val ips = 
+      for(interface <- NetworkInterface.getNetworkInterfaces();
+    	address <- interface.getInetAddresses()) 
+      yield address.getHostAddress()   
+    
     val system =
-      ActorSystem("SlaveSystem", ConfigFactory.load("slave"))
+      ActorSystem("SlaveSystem", ConfigFactory.load("slave").
+          withValue("remote.netty.tcp.hostname", 
+              ConfigValueFactory.fromAnyRef(
+                  ips.find(ip => ip.startsWith("10.0.1")).get)))
     this.system = Some(system)
       
     val remoteMasterPath =
