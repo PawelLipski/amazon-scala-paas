@@ -85,7 +85,7 @@ object RunnerApplication {
     
     val remoteMasterPath =
       "akka.tcp://MasterSystem@" + masterIP + ":2552/user/master"
-    val actor = system.actorOf(Props(classOf[MasterControlActor], remoteMasterPath), "slave")
+    val actor = system.actorOf(Props(classOf[SlaveControlActor], remoteMasterPath), "slave")
 
     Logger.info("Started SlaveSystem")
     import system.dispatcher
