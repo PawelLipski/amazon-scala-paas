@@ -24,6 +24,7 @@ class SlaveControlActor(masterPath: String) extends Actor {
   def receive = {
     case LaunchRequest(agentSpec) =>
       Logger.info("LaunchRequest")
+      Logger.info(agentSpec.toString)
       val agents = agentSpec.map(agent => 
         (context.actorOf(
             Props(Class.forName(agent._1)),
