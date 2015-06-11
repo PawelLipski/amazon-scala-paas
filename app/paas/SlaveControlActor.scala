@@ -8,41 +8,37 @@ import akka.actor.Identify
 import akka.actor.ReceiveTimeout
 import akka.actor.Terminated
 import play.Logger
+import akka.actor.Props
 
-class SlaveControlActor(path: String) extends Actor {
+class SlaveControlActor(masterPath: String) extends Actor {
 
-  sendIdentifyRequest()
+  sendReadyToLaunch()
 
-  def sendIdentifyRequest(): Unit = {
-    context.actorSelection(path) ! Identify(path)
+  def sendReadyToLaunch(): Unit = {
+    context.actorSelection(masterPath) ! ReadyToLaunch
     import context.dispatcher
     context.system.scheduler.scheduleOnce(3.seconds, self, ReceiveTimeout)
   }
 
-  def receive = identifying
-
-  def identifying: Actor.Receive = {
-    
-    case ActorIdentity(`path`, Some(actor)) =>
-      context.watch(actor)
-      context.become(active(actor))
-    case ActorIdentity(`path`, None) => Logger.info(s"Remote actor not available: $path")
-    case ReceiveTimeout              => sendIdentifyRequest()
-    case _                           => Logger.info("Not ready yet")
+  def receive = {
+    case LaunchRequest(agentSpec) =>
+      val agents = agentSpec.map(agent => 
+        (context.actorOf(Props(Class.forName(agent._1)), agent._1.split(".").last+agent._2), agent._2))
+      for(agent <- agents)
+        agent._1 ! Run(agent._2)
+        
+      val refs = agents.map(f => f._1)
+      sender ! LaunchResult(refs)
+      context.become(active(refs))
+    case ReceiveTimeout              => sendReadyToLaunch()
+    case _                           => Logger.info("Unknown message")
   }
 
-  def active(actor: ActorRef): Actor.Receive = {
-    case op: ReqMessage => actor ! op
-    case result: ResMessage => result match {
-      case Adage(text) =>
-        Logger.info("%%% Master said: " + text + "\n")
-    }
-    case Terminated(`actor`) =>
+  def active(agentSpec: List[ActorRef]): Actor.Receive = {
+    
+    case Stop =>
       Logger.info("Master terminated")
-      sendIdentifyRequest()
-      context.become(identifying)
-    case ReceiveTimeout =>
-    // ignore
-
+      
+    case _ => // ignore
   }
 }

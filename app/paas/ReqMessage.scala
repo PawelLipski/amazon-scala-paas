@@ -1,11 +1,21 @@
 package paas
 
-trait ReqMessage
+import akka.actor.ActorRef
 
-case class TellMeSomethingMyMaster() extends ReqMessage
+trait ReqMessage
 
 trait ResMessage
 
-case class Adage(text: String) extends ResMessage
+case object ReadyToLaunch extends ResMessage
 
-case class Launch(slaves: List[String], values: Map[String, Int])
+case class Run(num: Int) extends ReqMessage
+
+case object Stop extends ReqMessage
+
+case object ShowState extends ReqMessage
+
+case class Launch(slaves: List[String], values: Map[String, Int]) extends ReqMessage
+
+case class LaunchRequest(agentSpec: List[(String, Int)]) extends ReqMessage
+
+case class LaunchResult(agents: List[ActorRef]) extends ReqMessage

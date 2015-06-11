@@ -17,7 +17,8 @@ case class VickeryAuction(bidTime: FiniteDuration, deleteTime: FiniteDuration, s
 
   val auctionSearchPath: String = "../../" + auctionSearchName
 
-  startWith(NotInitialized, NotInitializedData)
+  override def run(num: Int) {
+    startWith(NotInitialized, NotInitializedData)
 
   when(NotInitialized) {
     case Event(Start, _) => {
@@ -103,6 +104,9 @@ case class VickeryAuction(bidTime: FiniteDuration, deleteTime: FiniteDuration, s
     case Event(_, _) =>
       stay
   }
+  }
+  
+  
 
 }
 

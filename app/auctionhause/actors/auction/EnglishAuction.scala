@@ -101,7 +101,7 @@ case class EnglishAuction(bidTime: FiniteDuration, deleteTime: FiniteDuration, s
     case Event(_, _) =>
       stay
   }
-
+  
 }
 
 

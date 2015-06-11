@@ -73,15 +73,16 @@ object RunnerApplication {
           withValue("remote.netty.tcp.hostname", 
               ConfigValueFactory.fromAnyRef(ip)))
     this.system = Some(system)
+    Logger.info("Started SlaveSystem")
     
-    val remoteMasterPath =
+    system.actorOf(Props[SlaveControlActor], "slave")
+    
+    /*val remoteMasterPath =
       "akka.tcp://MasterSystem@" + masterIP + ":2552/user/master"+ip
     
     val actor = system.actorOf(Props[MasterControlActor].withDeploy
         (Deploy(scope = RemoteScope(AddressFromURIString(remoteMasterPath))))
     , ip)
-
-    Logger.info("Started SlaveSystem")
     
     val selection =
       system.actorSelection("akka.tcp://MasterSystem@" + masterIP + ":2552/user/master")
@@ -92,7 +93,7 @@ object RunnerApplication {
       actor ! TellMeSomethingMyMaster
       
       selection ! TellMeSomethingMyMaster
-    }
+    }*/
     
   }
   

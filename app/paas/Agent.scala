@@ -5,15 +5,18 @@ import akka.actor.Actor
 
 trait Agent extends Actor {
   
-	def getActorReference(name: String) = {} // ActorRef = {
-        // tutaj będzie implementacja, coś na zasadzie:
-        // masterControlActor ! FetchActorRef(name) 
-//    -> wait for response => ActorRef do szukanego aktora
-        // kwestia do ogarnięcia, jak masterControlActor zostanie przekazany do Agenta
-        // konstruktor czy coś, nie istotne aż tak
-	// }
-    def run(id: Int) = {} // abstrakcyjna - to w niej będziemy korzystać z getActorReference
-    def state: String = "" // abstrakcyjna
+	final def receive = {
+		case Run(num) => run(num)
+		case ShowState => sender ! state
+		case any => getMessage(any)
+	}
 
-    override def toString = state
+    def run(number: Int) = {} // abstrakcyjna
+    def state: String = "" // abstrakcyjna
+      
+    def getMessage(msg: Any) = {
+      sender ! msg
+    }
+      
+    final override def toString = state
 }
