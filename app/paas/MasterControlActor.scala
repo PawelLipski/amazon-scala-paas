@@ -18,7 +18,7 @@ class MasterControlActor extends Actor {
         val thread = new Thread(new Runnable {
 		  def run() {
 		    Process(s"ssh -i aws-master-key.pem $slave killall java") ! ;
-		    Process(s"ssh -i aws-master-key.pem $slave cd paas-repo; nohup sbt run &") !
+		    Process(s"ssh -i aws-master-key.pem $slave cd paas-repo; sbt start -mem 800 < /dev/null") !
 		  }
 		})
         thread.start
@@ -28,8 +28,8 @@ class MasterControlActor extends Actor {
     case TellMeSomethingMyMaster =>
       Logger.info("ping!")
       Logger.info("*** Sender " + sender.path + " is asking me to tell him something interesting:)!\n")
-      //val adage = "fortune".!!
-      //sender ! Adage(adage)
+      val adage = Process("fortune") !! ;
+      sender ! Adage(adage)
   }
 }
 

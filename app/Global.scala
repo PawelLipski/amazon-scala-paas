@@ -7,7 +7,7 @@ import java.net.NetworkInterface
 
 object Global extends GlobalSettings {
 
-  val masterIP = "10.0.1.1"//"10.0.0.240"
+  val masterIP = "10.0.0.240"
   
   override def onStart(app: Application) {
     Logger.info("Application has started")

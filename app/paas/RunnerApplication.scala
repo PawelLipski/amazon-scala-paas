@@ -39,13 +39,32 @@ object RunnerApplication {
   }
   
   def startRemoteMasterSystem(masterIP: String): Unit = {
+    val ips = 
+      for(interface <- NetworkInterface.getNetworkInterfaces();
+    	address <- interface.getInetAddresses()) 
+      yield address.getHostAddress()   
+    
     val system = ActorSystem("MasterSystem",
-      ConfigFactory.load("master"))
+      ConfigFactory.load("master").
+      	withValue("remote.netty.tcp.hostname", 
+          ConfigValueFactory.fromAnyRef(masterIP)))  
+      
     this.system = Some(system)
     
     system.actorOf(Props[MasterControlActor], "master")
 
     Logger.info("Started MasterSystem - waiting for messages")
+    
+    val remoteMasterPath =
+      "akka.tcp://SlaveSystem@10.0.1.188:2553/user/slavetest"
+    //val actor = system.actorOf(Props(classOf[SlaveControlActor], remoteMasterPath), "slave1")
+ 
+    import system.dispatcher
+    /*system.scheduler.schedule(1.second, 5.second) {
+      Logger.info("###Slave, tell me something interesting please!\n")
+      actor ! TellMeSomethingMyMaster
+    }  */
+      
   }
 
   def startRemoteSlaveSystem(masterIP: String): Unit = {
@@ -62,6 +81,8 @@ object RunnerApplication {
                   ips.find(ip => ip.startsWith("10.0.1")).get)))
     this.system = Some(system)
       
+    system.actorOf(Props[MasterControlActor], "slavetest")
+    
     val remoteMasterPath =
       "akka.tcp://MasterSystem@" + masterIP + ":2552/user/master"
     val actor = system.actorOf(Props(classOf[SlaveControlActor], remoteMasterPath), "slave")
