@@ -55,13 +55,13 @@ class MasterControlActor extends Actor {
       val todo = perSlaveMin + takeOneOrNone(leftover)
       while(taken != todo)
       {
-        taken += Math.min(todo, params(0)._2)
+        taken += Math.min(todo, params(i)._2)
         for(i <- Range(1, taken))
-          toSent.+=((params(0)._1, i))
-        if(params(0)._2 >= todo)
-        	params(0) = (params(0)._1, params(0)._2 - todo)
+          toSent.+=((params(i)._1, i))
+        if(params(i)._2 >= todo)
+        	params(i) = (params(i)._1, params(i)._2 - todo)
         else
-        	params(0) = (params(0)._1, 0) 
+        	params(i) = (params(i)._1, 0) 
         i += 1
       }
       
