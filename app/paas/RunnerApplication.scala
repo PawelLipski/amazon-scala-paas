@@ -78,7 +78,7 @@ object RunnerApplication {
     system.actorOf(Props(classOf[SlaveControlActor], 
         "akka.tcp://MasterSystem@" + masterIP + ":2552/user/master"), "slave")
     
-    val actor = system.actorOf(Props[MasterControlActor].withDeploy
+    /*val actor = system.actorOf(Props[MasterControlActor].withDeploy
         (Deploy(scope = RemoteScope(AddressFromURIString(remoteMasterPath))))
     , ip)
     
