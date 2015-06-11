@@ -20,17 +20,6 @@ class MasterControlActor extends Actor {
       val perSlaveMin = agentNumber / slaves.length
       val leftover = agentNumber % slaves.length
       
-      for(slave <- slaves zipWithIndex) {
-        val thread = new Thread(new Runnable {
-		  def run() {
-		    Process("ssh -i aws-master-key.pem "+slave._1+" killall java") ! ;
-		    Thread.sleep(1000)
-		    Process("ssh -i aws-master-key.pem "+slave._1+" cd paas-repo; sbt start -mem 800 < /dev/null") !
-		  }
-		})
-        thread.start
-      }
-      Thread.sleep(10000)
       context.become(active(MutableList(params.toList:_*), perSlaveMin, leftover))
   
     case LaunchResult(refs) => registerLanuched(refs)
@@ -60,7 +49,8 @@ class MasterControlActor extends Actor {
       {
         Logger.debug("i: "+i)
         taken += Math.min(todo, params(i)._2)
-        Logger.debug("taken: "+todo)
+        Logger.debug("params(i)._2: "+params(i)._2)
+        Logger.debug("taken: "+taken)
         for(j <- Range(0, Math.min(todo, params(i)._2)))
           toSent.+=((params(i)._1, j+1))
         if(params(i)._2 >= todo)

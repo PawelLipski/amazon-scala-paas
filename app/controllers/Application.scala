@@ -92,8 +92,19 @@ object Application extends Controller {
       val scpStr = s"scp -i $authKeypath ${input.getCanonicalPath} $targetFile"
       Logger.info(scpStr)
       Process(scpStr) !
+      
+      for(slave <- slaves) {
+        val thread = new Thread(new Runnable {
+		  def run() {
+		    Process("ssh -i aws-master-key.pem "+slave+" killall java") ! ;
+		    Thread.sleep(1000)
+		    Process("ssh -i aws-master-key.pem "+slave+" cd paas-repo; sbt start -mem 800 < /dev/null") !
+		  }
+		})
+        thread.start
+      }
     } catch {
-      case t: Throwable => Logger.error("SCP error", t)
+      case t: Throwable => Logger.error("SSH error", t)
     }
   }
 }
