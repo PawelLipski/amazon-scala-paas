@@ -31,7 +31,7 @@ class SlaveControlActor(masterPath: String) extends Actor {
         
       val refs = agents.map(f => f._1)
       sender ! LaunchResult(refs)
-      context.become(active(refs))
+      //context.become(active(refs))
     case ReceiveTimeout              => sendReadyToLaunch()
     case _                           => Logger.info("Unknown message")
   }

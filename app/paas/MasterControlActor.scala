@@ -48,7 +48,7 @@ class MasterControlActor extends Actor {
       }
       
       if((currentAgents.length == slaveCount) && !isNew) {
-        currentAgents.clear
+        //currentAgents.clear
         context.become(receive)
       } else if (isNew) {
 	      var taken = 0
@@ -79,7 +79,7 @@ class MasterControlActor extends Actor {
 	      sender ! LaunchRequest(toSent.toList) 
 	      
 	      if(currentAgents.length == slaveCount) {
-	    	  currentAgents.clear
+	    	  //currentAgents.clear
 		  	  context.become(receive)
 	      }
 	      
