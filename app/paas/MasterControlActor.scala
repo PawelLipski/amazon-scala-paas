@@ -38,6 +38,10 @@ class MasterControlActor extends Actor {
     
     case ReadyToLaunch => 
       Logger.info("ReadyToLaunch")
+      
+      if(params.last._2 == 0)
+        context.become(receive)
+      
       var taken = 0
       var toSent: MutableList[(String, Int)] = MutableList()
       val todo = perSlaveMin + takeOneOrNone(leftover)
@@ -50,7 +54,7 @@ class MasterControlActor extends Actor {
         Logger.debug("i: "+i)
         taken += Math.min(todo, params(i)._2)
         Logger.debug("params(i)._2: "+params(i)._2)
-        Logger.debug("taken: "+taken)
+        Logger.debug("taken: "+Math.min(todo, params(i)._2))
         for(j <- Range(0, Math.min(todo, params(i)._2)))
           toSent.+=((params(i)._1, j+1))
         if(params(i)._2 >= todo)
@@ -61,9 +65,6 @@ class MasterControlActor extends Actor {
       }
       
       sender ! LaunchRequest(toSent.toList) 
-      
-      if(params.last._2 == 0)
-        context.become(receive)
       
       if(leftover > 0)
     	  context.become(active(params, perSlaveMin, leftover-1))
