@@ -28,7 +28,9 @@ class SlaveControlActor(masterPath: String) extends Actor {
       val agents = agentSpec.map(agent => 
         (context.actorOf(
             Props(Class.forName(agent._1)), "s"+agent._2), agent._2))
-            	//agent._1.split(".").last+agent._2)
+      for(agent <- agentSpec)
+    	  Logger.info(agent._1.split(".").last+agent._2)
+        //agent._1.split(".").last+agent._2)
             
             
       for(agent <- agents)
