@@ -24,16 +24,12 @@
     file: path=/home/ubuntu/paas-repo/lib/ state=directory  
     
   - name: Shutdown the service
-    command: killall -TERM java  
+    command: killall java  
     ignore_errors: yes
   
-  - name: Prepare the service
-    shell: sbt stage -mem 800
-    args:
-        chdir: ~/paas-repo
-    
-  - name: Launch the service
-    shell: nohup sbt start -mem 800
-    args:
-        chdir: ~/paas-repo
+  - name: Stage the project
+    command: chdir=/home/ubuntu/paas-repo/ sbt stage
+
+  - name: Run the project in background
+    command: chdir=/home/ubuntu/paas-repo/ nohup ./target/universal/stage/bin/amazon-app-platform &
 

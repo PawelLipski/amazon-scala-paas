@@ -13,6 +13,13 @@
     apt: name=fail2ban state=present force=yes
     sudo: yes 
 
+  - name: Disable host key checking
+    command: creates=/home/ubuntu/.ansible.cfg cp /home/ubuntu/paas-repo/ansible.cfg /home/ubuntu/.ansible.cfg
+
+  - name: Set up NAT for slave machines
+    command: iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
+    sudo: yes
+
   - name: Download Play
     get_url: url=http://downloads.typesafe.com/play/2.2.6/play-2.2.6.zip dest=/home/ubuntu/play-2.2.6.zip
 
@@ -22,6 +29,13 @@
   - name: Clone/update the repo
     git: repo=https://github.com/tilius/amazon-scala-paas.git dest=/home/ubuntu/paas-repo
 
-  - name: Disable host key checking
-    command: creates=/home/ubuntu/.ansible.cfg cp /home/ubuntu/paas-repo/ansible.cfg /home/ubuntu/.ansible.cfg
+  - name: Shutdown the web server
+    command: killall -TERM java  
+    ignore_errors: yes
+
+  - name: Stage the project
+    command: chdir=/home/ubuntu/paas-repo/ /home/ubuntu/play-2.2.6/play stage
+
+  - name: Run the project in background
+    command: chdir=/home/ubuntu/paas-repo/ nohup ./target/universal/stage/bin/amazon-app-platform &
 
