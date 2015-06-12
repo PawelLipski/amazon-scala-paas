@@ -15,4 +15,6 @@ dist
 /RUNNING_PID
 /.settings
 ansible_hosts_control
-
+nohup.out
+lib/
+*.pem
