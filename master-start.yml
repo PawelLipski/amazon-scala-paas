@@ -20,14 +20,6 @@
     command: iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
     sudo: yes
 
-  - name: Install sbt
-    apt: name=sbt state=present force=yes update_cache=yes
-    sudo: yes
-
-  - name: Install OpenJDK
-    apt: name=openjdk-7-jdk state=present force=yes
-    sudo: yes
-
   - name: Clone/update the repo
     git: repo=https://github.com/tilius/amazon-scala-paas.git dest=/home/ubuntu/paas-repo
 
@@ -35,9 +27,9 @@
     command: killall -TERM java  
     ignore_errors: yes
 
-  - name: Stage the project
-    command: chdir=/home/ubuntu/paas-repo/ sbt stage
+  - name: Stage the web app
+    command: chdir=/home/ubuntu/paas-repo/ ../play-2.2.6/play stage
 
-  - name: Run the project in background
+  - name: Run the web server in background
     command: chdir=/home/ubuntu/paas-repo/ nohup ./target/universal/stage/bin/amazon-app-platform &
 
