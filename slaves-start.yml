@@ -31,5 +31,5 @@
     command: chdir=/home/ubuntu/paas-repo/ sbt stage
 
   - name: Run the back-end server in background
-    shell: chdir=/home/ubuntu/paas-repo/ dummy=$(nohup ./target/universal/stage/bin/amazon-app-platform &)
+    shell: chdir=/home/ubuntu/paas-repo/ ( (nohup ./target/universal/stage/bin/amazon-app-platform 1>/dev/null 2>&1 ) & )
 
