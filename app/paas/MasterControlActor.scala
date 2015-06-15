@@ -8,6 +8,7 @@ import scala.language.postfixOps
 import scala.collection.mutable.MutableList
 import akka.actor.ActorRef
 import scala.collection.mutable.HashMap
+import akka.pattern.GracefulStopSupport
 
 class MasterControlActor extends Actor {
   
@@ -38,6 +39,16 @@ class MasterControlActor extends Actor {
   
   def fetchActorRef(actorName: String) = 
     synchronize(launchedAgentsMap get(actorName))
+    
+  def killAgent(agentName: String) {
+      val maybe = fetchActorRef(agentName)
+      if(maybe.isDefined) {
+        context.stop(maybe.get)
+      }     
+  }
+  
+  def getAllAgents() = 
+    synchronize(launchedAgentsMap.toList)
   
   def registerLaunched(refs: List[(String, String, ActorRef)]) {
     Logger.info("Launch Success! " + refs.toString)
