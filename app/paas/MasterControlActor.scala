@@ -68,7 +68,8 @@ class MasterControlActor extends Actor {
           isNew = true
       }
       
-      if((currentAgents.length == slaveCount) && !isNew) {
+      if(((currentAgents.length == slaveCount) && !isNew)
+          || params.forall(f => f._2 == 0)) {
         currentAgents.clear
         Logger.debug("current agents: "+currentAgents)
         context.become(receive)
