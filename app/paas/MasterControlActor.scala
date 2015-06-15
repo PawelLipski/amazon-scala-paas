@@ -22,7 +22,10 @@ class MasterControlActor extends Actor {
       val perSlaveMin = agentNumber / slaves.length
       val leftover = agentNumber % slaves.length
       
-      context.become(active(slaves.length, MutableList(params.toList:_*), perSlaveMin, leftover))
+      val list = MutableList(params.toList:_*)
+      
+      context.become(active(slaves.length, list,
+          list.map(_ => 0), perSlaveMin, leftover))
   
     case LaunchResult(refs) => registerLaunched(refs)
       
@@ -35,7 +38,8 @@ class MasterControlActor extends Actor {
   
   def takeOneOrNone(sum: Int) = if(sum > 0) 1 else 0
   
-  def active(slaveCount: Int, params: MutableList[(String, Int)], perSlaveMin: Int, leftover: Int): 
+  def active(slaveCount: Int, params: MutableList[(String, Int)], sent: MutableList[Int],
+      perSlaveMin: Int, leftover: Int): 
 	  Actor.Receive = {
     
     case ReadyToLaunch => 
@@ -48,7 +52,7 @@ class MasterControlActor extends Actor {
       }
       
       if((currentAgents.length == slaveCount) && !isNew) {
-        //currentAgents.clear
+        currentAgents.clear
         context.become(receive)
       } else if (isNew) {
 	      var taken = 0
@@ -66,12 +70,18 @@ class MasterControlActor extends Actor {
 	        taken += choice
 	        Logger.debug("params(i)._2: "+params(i)._2)
 	        Logger.debug("taken: "+choice)
-	        for(j <- Range(0, choice))
-	          toSent.+=((params(i)._1, j+1))
+	        
 	        if(params(i)._2 >= todo)
 	        	params(i) = (params(i)._1, params(i)._2 - todo)
 	        else
 	        	params(i) = (params(i)._1, 0) 
+	        
+	        for(j <- Range(1, choice+1)) {
+	          toSent += ((params(i)._1, j+sent(i)))
+	          sent(i) += choice
+	        }
+	          
+	          
 	        i += 1
 	      }
 	      
@@ -79,14 +89,14 @@ class MasterControlActor extends Actor {
 	      sender ! LaunchRequest(toSent.toList) 
 	      
 	      if(currentAgents.length == slaveCount) {
-	    	  //currentAgents.clear
+	    	  currentAgents.clear
 		  	  context.become(receive)
 	      }
 	      
 	      if(leftover > 0)
-	    	  context.become(active(slaveCount, params, perSlaveMin, leftover-1))
+	    	  context.become(active(slaveCount, params, sent, perSlaveMin, leftover-1))
 	      else
-	    	  context.become(active(slaveCount, params, perSlaveMin, 0))
+	    	  context.become(active(slaveCount, params, sent, perSlaveMin, 0))
       }
      case LaunchResult(refs) => registerLaunched(refs)
      
