@@ -32,7 +32,7 @@ class SlaveControlActor(masterPath: String) extends Actor {
       for(agent <- agents)
         agent._1 ! Run(agent._2)
         
-      val refs = agents.map(f => f._1)
+      val refs = agents.map(f => (f._1+f._2.toString, f._1))
       sender ! LaunchResult(refs)
       //context.become(active(refs))
     case ReceiveTimeout              => sendReadyToLaunch()

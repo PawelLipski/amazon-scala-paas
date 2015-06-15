@@ -7,10 +7,11 @@ import play.Logger
 import scala.language.postfixOps
 import scala.collection.mutable.MutableList
 import akka.actor.ActorRef
+import scala.collection.mutable.HashMap
 
 class MasterControlActor extends Actor {
   
-  var launchedAgents: MutableList[ActorRef] = MutableList()
+  var launchedAgents: HashMap[String, ActorRef] = HashMap()
   var currentAgents: MutableList[ActorRef] = MutableList()
   
   def receive = {
@@ -30,10 +31,17 @@ class MasterControlActor extends Actor {
     case LaunchResult(refs) => registerLaunched(refs)
       
   }
+
+  def fetchActorRef(actorName: String) = 
+    launchedAgents.synchronized(launchedAgents get(actorName))
   
-  def registerLaunched(refs: List[ActorRef]) {
+  def registerLaunched(refs: List[(String, ActorRef)]) {
     Logger.info("Launch Success! " + refs.toString)
-    launchedAgents.synchronized(launchedAgents ++= refs)   
+    launchedAgents.synchronized(
+		for(ref <- refs) {
+		  launchedAgents put(ref._1, ref._2)
+		}
+    )   
   }
   
   def takeOneOrNone(sum: Int) = if(sum > 0) 1 else 0
