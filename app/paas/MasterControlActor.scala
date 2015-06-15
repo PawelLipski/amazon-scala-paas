@@ -98,11 +98,10 @@ class MasterControlActor extends Actor {
 	        
 	        synchronize(
 		        for(j <- Range(1, choice+1))
-		          toSent += ((params(i)._1, j+sent(i)+
-		              launchedAgentsCounters.getOrElse(params(i)._1, 0)))
+		          toSent += ((params(i)._1, j+
+		              launchedAgentsCounters.getOrElse(params(i)._1, sent(i))))
 	        )
-	        sent(i) += choice
-	          
+	        sent(i) += choice  
 	        i += 1
 	      }
 	      
