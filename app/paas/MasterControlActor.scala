@@ -76,11 +76,9 @@ class MasterControlActor extends Actor {
 	        else
 	        	params(i) = (params(i)._1, 0) 
 	        
-	        for(j <- Range(1, choice+1)) {
+	        for(j <- Range(1, choice+1))
 	          toSent += ((params(i)._1, j+sent(i)))
-	          sent(i) += choice
-	        }
-	          
+	        sent(i) += choice
 	          
 	        i += 1
 	      }
