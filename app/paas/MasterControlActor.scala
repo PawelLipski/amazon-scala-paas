@@ -11,11 +11,12 @@ import scala.collection.mutable.HashMap
 
 class MasterControlActor extends Actor {
   
-  var launchedAgents: HashMap[String, ActorRef] = HashMap()
+  var launchedAgentsMap: HashMap[String, ActorRef] = HashMap()
+  var launchedAgentsCounters: HashMap[String, Int] = HashMap()
+  
   var currentAgents: MutableList[ActorRef] = MutableList()
   
   def receive = {
-    
     
     case Launch(slaves, params) =>
       Logger.info("Launch")
@@ -32,14 +33,22 @@ class MasterControlActor extends Actor {
       
   }
 
-  def fetchActorRef(actorName: String) = 
-    launchedAgents.synchronized(launchedAgents get(actorName))
+  def synchronize[T0](x: T0): T0 = 
+    launchedAgentsMap.synchronized(launchedAgentsCounters.synchronized(x))
   
-  def registerLaunched(refs: List[(String, ActorRef)]) {
+  def fetchActorRef(actorName: String) = 
+    synchronize(launchedAgentsMap get(actorName))
+  
+  def registerLaunched(refs: List[(String, String, ActorRef)]) {
     Logger.info("Launch Success! " + refs.toString)
-    launchedAgents.synchronized(
+    synchronize(
 		for(ref <- refs) {
-		  launchedAgents put(ref._1, ref._2)
+		  launchedAgentsMap put(ref._1, ref._3)
+		  val prev = launchedAgentsCounters.get(ref._2)
+		  if(prev.isDefined)
+			  launchedAgentsCounters.update(ref._2, prev.get+1)
+		  else
+			  launchedAgentsCounters.update(ref._2, 1)
 		}
     )   
   }
@@ -61,12 +70,14 @@ class MasterControlActor extends Actor {
       
       if((currentAgents.length == slaveCount) && !isNew) {
         currentAgents.clear
+        Logger.debug("current agents: "+currentAgents)
         context.become(receive)
       } else if (isNew) {
 	      var taken = 0
 	      var toSent: MutableList[(String, Int)] = MutableList()
 	      val todo = perSlaveMin + takeOneOrNone(leftover)
 	      
+	      Logger.debug("current agents: "+currentAgents)
 	      Logger.debug("Params: "+params)
 	      Logger.debug("TODO: "+todo)
 	      
@@ -84,8 +95,11 @@ class MasterControlActor extends Actor {
 	        else
 	        	params(i) = (params(i)._1, 0) 
 	        
-	        for(j <- Range(1, choice+1))
-	          toSent += ((params(i)._1, j+sent(i)))
+	        synchronize(
+		        for(j <- Range(1, choice+1))
+		          toSent += ((params(i)._1, j+sent(i)+
+		              launchedAgentsCounters(params(i)._1)))
+	        )
 	        sent(i) += choice
 	          
 	        i += 1
@@ -96,6 +110,7 @@ class MasterControlActor extends Actor {
 	      
 	      if(currentAgents.length == slaveCount) {
 	    	  currentAgents.clear
+	    	  Logger.debug("current agents: "+currentAgents)
 		  	  context.become(receive)
 	      }
 	      

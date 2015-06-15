@@ -26,13 +26,13 @@ class SlaveControlActor(masterPath: String) extends Actor {
       Logger.info("LaunchRequest")
       Logger.info(agentSpec.toString)
       val agents = agentSpec.map(agent => 
-        (context.actorOf(
-            Props(Class.forName(agent._1)), agent._1+agent._2), agent._2))       
+        (agent._1, agent._2, context.actorOf(
+            Props(Class.forName(agent._1)), agent._1+agent._2)))       
             
       for(agent <- agents)
-        agent._1 ! Run(agent._2)
+        agent._3 ! Run(agent._2)
         
-      val refs = agents.map(f => (f._1+f._2.toString, f._1))
+      val refs = agents.map(f => (f._1+f._2.toString, f._1, f._3))
       sender ! LaunchResult(refs)
       //context.become(active(refs))
     case ReceiveTimeout              => sendReadyToLaunch()

@@ -18,4 +18,4 @@ case class Launch(slaves: List[String], values: Map[String, Int]) extends ReqMes
 
 case class LaunchRequest(agentSpec: List[(String, Int)]) extends ReqMessage
 
-case class LaunchResult(agents: List[(String, ActorRef)]) extends ReqMessage
+case class LaunchResult(agents: List[(String, String, ActorRef)]) extends ReqMessage
