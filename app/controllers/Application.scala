@@ -18,8 +18,8 @@ import play.api.libs.concurrent.Execution.Implicits.defaultContext
 object Application extends Controller {
 
   val slaves: List[String] = List(
-    //    "ubuntu@10.0.1.188",
-    //    "ubuntu@10.0.1.221"
+        "ubuntu@10.0.1.188",
+        "ubuntu@10.0.1.221"
   )
 
   def index = Action.async {

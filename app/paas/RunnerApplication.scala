@@ -64,7 +64,7 @@ object RunnerApplication {
         address <- interface.getInetAddresses
       } yield address.getHostAddress
 
-    val ip = ips.find(ip => ip.startsWith("127.0.0")).get
+    val ip = ips.find(ip => ip.startsWith("10.0.0.1")).get
 
     val system =
       ActorSystem("SlaveSystem", ConfigFactory.load("slave").
