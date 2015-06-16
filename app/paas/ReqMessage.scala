@@ -22,6 +22,6 @@ case class LaunchResult(agents: List[(String, String, ActorRef)]) extends ReqMes
 
 case object GetRunningAgents
 
-case class RunningAgents(agents: Map[String, ActorRef])
+case class RunningAgents(agents: Map[String, String])
 
 case class KillAgent(agentName: String)

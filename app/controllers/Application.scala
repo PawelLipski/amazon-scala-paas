@@ -50,7 +50,7 @@ object Application extends Controller {
     val runningAgents = RunnerApplication.getListOfRunning(30 seconds)
 
     runningAgents.map(_.agents).map { agents =>
-      Ok(views.html.index("You can send your new application here.", indexedData, agents.keys.toList))
+      Ok(views.html.index("You can send your new application here.", indexedData, agents))
     }
   }
 

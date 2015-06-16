@@ -2,14 +2,15 @@ package paas
 
 import java.net.NetworkInterface
 
-import akka.actor.{ActorSelection, ActorSystem, Props}
+import akka.actor.{ActorSystem, Props}
 import akka.util.Timeout
 import com.typesafe.config.{ConfigFactory, ConfigValueFactory}
-import paas.GetRunningAgents
 import play.Logger
 
 import scala.collection.JavaConversions._
 import scala.concurrent.Future
+import scala.concurrent.duration._
+import scala.language.postfixOps
 
 object RunnerApplication {
 
@@ -104,17 +105,17 @@ object RunnerApplication {
 
   def getMasterSystem: Option[ActorSystem] = this.system.find(system => system.name == "MasterSystem")
 
-  def getMasterActor: Option[ActorSelection] = {
+  def getMasterActor = {
     getMasterSystem.map(_.actorSelection("/user/master"))
+      .get.resolveOne(5 seconds).value.get.get
   }
 
   import akka.pattern.ask
 
   def getListOfRunning(implicit tm: Timeout): Future[RunningAgents] =
-    getMasterActor.map(_ ? GetRunningAgents)
-      .map(_.mapTo[RunningAgents])
-      .getOrElse(Future.successful(RunningAgents(Map.empty)))
+    (getMasterActor ? GetRunningAgents)
+      .mapTo[RunningAgents]
 
   def performStop(name: String) =
-    getMasterActor.foreach(_ ! KillAgent(name))
+    getMasterActor ! KillAgent(name)
 }

@@ -1,4 +1,4 @@
-@(message: String, applications: List[(String, List[(String, Int)])], runningApps: List[String])
+@(message: String, applications: List[(String, List[(String, Int)])], runningApps: Map[String, String])
 <!DOCTYPE html>
 <html>
     <head>
@@ -46,7 +46,7 @@
         @runningApps.map { app =>
             <li>
                 <div>
-                    @app <br/>
+                    @app._1 in state @app._2 <br/>
                     @helper.form(action = routes.Application.kill, 'id -> "kill") {
                         <input type="hidden" name="agenttokill" value="@app"/>
                         <input type="submit" value="zatrzymaj"/>
