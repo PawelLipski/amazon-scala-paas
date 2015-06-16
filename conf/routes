@@ -10,3 +10,4 @@ GET     /assets/*file               controllers.Assets.at(path="/public", file)
 
 POST    /                           controllers.Application.upload()
 POST    /launch                     controllers.Application.launch()
+POST    /kill                       controllers.Application.kill()

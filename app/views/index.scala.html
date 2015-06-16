@@ -1,42 +1,60 @@
-@(message: String, applications: List[(String, List[(String, Int)])])
+@(message: String, applications: List[(String, List[(String, Int)])], runningApps: List[String])
 <!DOCTYPE html>
 <html>
     <head>
-    	<title>Agent Framework</title>
+        <title>Agent Framework</title>
         <link rel="stylesheet" href="@routes.Assets.at("stylesheets/main.css")">
         <link rel="shortcut icon" type="image/png" href="@routes.Assets.at("images/favicon.png")">
     </head>
     <body>
-    	@message
-		<hr/>
-	    @helper.form(action = routes.Application.upload, 'enctype -> "multipart/form-data") {
-	        <input type="file" name="picture">
-	        <p>
-	            <input type="submit" value="Załaduj kod">
-	        </p>
-	    }
-		    <hr/>
-		    <ul>
-		@helper.form(action = routes.Application.launch, 'id -> "launch") {
-			<p>
-	            <input type="submit" value="Uruchom">
-	        </p>
-	        
-		    @applications.map{app =>
-		        <li>
-		            @app._1<br/>
-		        <ul>
-		        @app._2.map{clas =>
-		            <li>
-		            	<input type="number" name="@clas._1" min="0" step="1" value="0" size="2">
-		            	<p class="name" name="agent@clas._2"> @clas._1 </p>
-		            </li>
-		        }
-		        </ul>
-		        </li>
-		    }
-		    </ul>
-	    }
+        @message
+        <hr/>
+        @helper.form(action = routes.Application.upload, 'enctype -> "multipart/form-data") {
+            <input type="file" name="picture">
+            <p>
+                <input type="submit" value="Załaduj kod">
+            </p>
+        }
+        <hr/>
+        <ul>
+        @helper.form(action = routes.Application.launch, 'id -> "launch") {
+            <p>
+                <input type="submit" value="Uruchom">
+            </p>
+
+            @applications.map { app =>
+                <li>
+                    @app._1 <br/>
+                <ul>
+                @app._2.map { clas =>
+                    <li>
+                        <input type="number" name="@clas._1" min="0" step="1" value="0" size="2">
+                        <p class="name" name="agent@clas._2"> @clas._1 </p>
+                    </li>
+                }
+                </ul>
+                </li>
+            }
+        </ul>
+    }
+        <hr/>
+
+        <p>
+            Działający agenci:
+        </p>
+        <ul>
+        @runningApps.map { app =>
+            <li>
+                <div>
+                    @app <br/>
+                    @helper.form(action = routes.Application.kill, 'id -> "kill") {
+                        <input type="hidden" name="agenttokill" value="@app"/>
+                        <input type="submit" value="zatrzymaj"/>
+                    }
+                </div>
+            </li>
+        }
+        </ul>
     </body>
 </html>
 

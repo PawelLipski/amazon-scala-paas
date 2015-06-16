@@ -13,9 +13,9 @@ object Global extends GlobalSettings {
     Logger.info("Application has started")
     
     val ips = 
-      for(interface <- NetworkInterface.getNetworkInterfaces();
-    	address <- interface.getInetAddresses()) 
-      yield address.getHostAddress()
+      for(interface <- NetworkInterface.getNetworkInterfaces;
+    	address <- interface.getInetAddresses)
+      yield address.getHostAddress
     
     if(ips.exists(ip => ip == masterIP))
 	  RunnerApplication.main(Array("Master", masterIP))

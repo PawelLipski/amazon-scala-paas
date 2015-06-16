@@ -1,32 +1,29 @@
 package paas
 
-import scala.concurrent.duration._
-import scala.util.Random
-import com.typesafe.config.ConfigFactory
-import akka.actor.ActorSystem
-import akka.actor.Props
-import scala.collection.mutable.MutableList
-import play.Logger
-import com.typesafe.config.ConfigValueFactory
 import java.net.NetworkInterface
+
+import akka.actor.{ActorSelection, ActorSystem, Props}
+import akka.util.Timeout
+import com.typesafe.config.{ConfigFactory, ConfigValueFactory}
+import paas.GetRunningAgents
+import play.Logger
+
 import scala.collection.JavaConversions._
-import akka.actor.Deploy
-import akka.remote.RemoteScope
-import akka.actor.AddressFromURIString
+import scala.concurrent.Future
 
 object RunnerApplication {
-  
+
   var system: Option[ActorSystem] = None
-  
+
   def main(args: Array[String]): Unit = {
     if (args.isEmpty || args.head == "Master")
-      if (args.length > 1){
+      if (args.length > 1) {
         startRemoteMasterSystem(args(1))
       } else {
         startRemoteMasterSystem("127.0.0.1")
       }
-    if (args.isEmpty || args.head == "Slave"){
-      if (args.length > 1){
+    if (args.isEmpty || args.head == "Slave") {
+      if (args.length > 1) {
         startRemoteSlaveSystem(args(1))
       } else {
         startRemoteSlaveSystem("127.0.0.1")
@@ -35,49 +32,50 @@ object RunnerApplication {
   }
 
   def stop(): Unit = {
-    if(system.isDefined) {
-      system.get.shutdown
+    if (system.isDefined) {
+      system.get.shutdown()
       system = None
     }
   }
-  
+
   def startRemoteMasterSystem(masterIP: String): Unit = {
-    val ips = 
-      for(interface <- NetworkInterface.getNetworkInterfaces();
-    	address <- interface.getInetAddresses()) 
-      yield address.getHostAddress()   
-    
+    val ips =
+      for {
+        interface <- NetworkInterface.getNetworkInterfaces
+        address <- interface.getInetAddresses
+      } yield address.getHostAddress
+
     val system = ActorSystem("MasterSystem",
       ConfigFactory.load("master").
-      	withValue("remote.netty.tcp.hostname", 
-          ConfigValueFactory.fromAnyRef(masterIP)))  
-      
+        withValue("remote.netty.tcp.hostname",
+          ConfigValueFactory.fromAnyRef(masterIP)))
+
     this.system = Some(system)
-    
+
     system.actorOf(Props[MasterControlActor], "master")
     Logger.info("Started MasterSystem - waiting for messages")
-      
   }
 
   def startRemoteSlaveSystem(masterIP: String): Unit = {
-   
-    val ips = 
-      for(interface <- NetworkInterface.getNetworkInterfaces();
-    	address <- interface.getInetAddresses()) 
-      yield address.getHostAddress()   
-    
-    val ip = ips.find(ip => ip.startsWith("10.0.1")).get
-      
+
+    val ips =
+      for {
+        interface <- NetworkInterface.getNetworkInterfaces
+        address <- interface.getInetAddresses
+      } yield address.getHostAddress
+
+    val ip = ips.find(ip => ip.startsWith("127.0.0")).get
+
     val system =
       ActorSystem("SlaveSystem", ConfigFactory.load("slave").
-          withValue("remote.netty.tcp.hostname", 
-              ConfigValueFactory.fromAnyRef(ip)))
+        withValue("remote.netty.tcp.hostname",
+          ConfigValueFactory.fromAnyRef(ip)))
     this.system = Some(system)
     Logger.info("Started SlaveSystem")
-    
-    system.actorOf(Props(classOf[SlaveControlActor], 
-        "akka.tcp://MasterSystem@" + masterIP + ":2552/user/master"), "slave")
-    
+
+    system.actorOf(Props(classOf[SlaveControlActor],
+      "akka.tcp://MasterSystem@" + masterIP + ":2552/user/master"), "slave")
+
     /*val actor = system.actorOf(Props[MasterControlActor].withDeploy
         (Deploy(scope = RemoteScope(AddressFromURIString(remoteMasterPath))))
     , ip)
@@ -92,15 +90,31 @@ object RunnerApplication {
       
       selection ! TellMeSomethingMyMaster
     }*/
-    
+
   }
-  
+
   def issueActionToMaster(slaves: List[String], values: Map[String, Int]) {
-    val master = this.system.find(system => system.name == "MasterSystem")  
-    if(master.isDefined) {
+    val master: Option[ActorSystem] = getMasterSystem
+    if (master.isDefined) {
       val system = master.get
       val ref = system.actorSelection("/user/master")
       ref ! Launch(slaves, values)
     }
   }
+
+  def getMasterSystem: Option[ActorSystem] = this.system.find(system => system.name == "MasterSystem")
+
+  def getMasterActor: Option[ActorSelection] = {
+    getMasterSystem.map(_.actorSelection("/user/master"))
+  }
+
+  import akka.pattern.ask
+
+  def getListOfRunning(implicit tm: Timeout): Future[RunningAgents] =
+    getMasterActor.map(_ ? GetRunningAgents)
+      .map(_.mapTo[RunningAgents])
+      .getOrElse(Future.successful(RunningAgents(Map.empty)))
+
+  def performStop(name: String) =
+    getMasterActor.foreach(_ ! KillAgent(name))
 }
