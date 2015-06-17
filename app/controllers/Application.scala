@@ -90,7 +90,7 @@ object Application extends Controller {
     Logger.info(s"received request $req")
     val result = req.body.asFormUrlEncoded.map { form =>
 	  Logger.info("form values: " + form.map(_._2.head.split(",").substring(1)))
-      val values = form.map(v => v._2.head.split(",").substring(1))
+      val values = form.map(v => v._2.head.split(",")(0).substring(1))
 	  Logger.info("agenttokill: " + values.get("agenttokill"))
       values.get("agenttokill").map { name =>
         Logger.debug(s"about to kill agent $name")
