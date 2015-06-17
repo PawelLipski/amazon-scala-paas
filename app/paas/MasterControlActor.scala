@@ -53,6 +53,7 @@ class MasterControlActor extends Actor {
     val maybe = fetchActorRef(agentName)
     if (maybe.isDefined) {
       context.stop(maybe.get)
+	  Logger.info("Agent name: " + agentName + ", launched: " + launchedAgentsMap)
 	  launchedAgentsMap -= agentName
     }
   }
