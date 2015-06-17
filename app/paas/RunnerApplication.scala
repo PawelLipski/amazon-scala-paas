@@ -103,7 +103,7 @@ object RunnerApplication {
     }
   }
 
-  def getMasterSystem: ActorSystem = this.system //.find(system => system.name == "MasterSystem")
+  def getMasterSystem: Option[ActorSystem] = this.system //.find(system => system.name == "MasterSystem")
 
   def getMasterActor = {
     Logger.info(getMasterSystem.toString)
