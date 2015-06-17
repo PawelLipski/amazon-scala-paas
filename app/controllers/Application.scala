@@ -26,6 +26,7 @@ object Application extends Controller {
     val f = new File(s"${System.getProperty("user.home")}/paas-repo/lib/")
     f.mkdir
     val l = f.listFiles.filter(_.isFile).toList
+    println("/lib/ dir: " + l)
     val data: List[(String, List[String])] = for {
       x <- l
       test = {
