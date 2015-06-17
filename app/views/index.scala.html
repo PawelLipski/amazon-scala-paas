@@ -48,7 +48,9 @@
                 <div>
 					@app._1 in state @app._2 
 					@helper.form(action = routes.Application.kill, 'id -> "kill") {
+						<p>
 						<input style="display: inline;" type="hidden" name="agenttokill" value="@app"/> <input style="display: inline;" type="submit" value="zatrzymaj"/>
+						</p>
 					}
                 </div>
             </li>
