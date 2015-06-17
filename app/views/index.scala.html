@@ -46,11 +46,9 @@
         @runningApps.map { app =>
             <li>
                 <div>
-                    @app._1 in state @app._2 <br/>
+                    @app._1 in state @app._2 
                     @helper.form(action = routes.Application.kill, 'id -> "kill") {
-						<span style="display: inline;">
-                        <input type="hidden" name="agenttokill" value="@app"/> <input type="submit" value="zatrzymaj"/>
-						</span>
+						<input type="hidden" name="agenttokill" value="@app"/> <input type="submit" value="zatrzymaj"/>
 					}
                 </div>
             </li>
