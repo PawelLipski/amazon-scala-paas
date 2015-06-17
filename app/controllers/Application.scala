@@ -26,7 +26,6 @@ object Application extends Controller {
     val f = new File(s"${System.getProperty("user.home")}/paas-repo/lib/")
     f.mkdir
     val l = f.listFiles.filter(_.isFile).toList
-    println("/lib/ dir: " + l)
     val data: List[(String, List[String])] = for {
       x <- l
       test = {
@@ -38,11 +37,9 @@ object Application extends Controller {
             .map(entry => entry.getName.replace("/", ".").dropRight(".class".length))
             .filter(entry => classOf[Agent].isAssignableFrom(jarClassLoader.loadClass(entry)))
             .filter(entry => !jarClassLoader.loadClass(entry).isInterface)
-          val classes = classNames.map( name =>
+          classNames.map( name =>
               name.replace("$", "")
           ).toList
-          println("Found classes: " + classes)
-          classes
       }
       }
     } yield {
