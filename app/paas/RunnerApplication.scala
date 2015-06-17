@@ -71,7 +71,7 @@ object RunnerApplication {
       ActorSystem("SlaveSystem", ConfigFactory.load("slave").
         withValue("remote.netty.tcp.hostname",
           ConfigValueFactory.fromAnyRef(ip)))
-    this.system = Some(system)
+    //this.system = Some(system)
     Logger.info("Started SlaveSystem")
 
     system.actorOf(Props(classOf[SlaveControlActor],
@@ -103,7 +103,7 @@ object RunnerApplication {
     }
   }
 
-  def getMasterSystem: Option[ActorSystem] = this.system.find(system => system.name == "MasterSystem")
+  def getMasterSystem: Option[ActorSystem] = this.system //.find(system => system.name == "MasterSystem")
 
   def getMasterActor = {
     getMasterSystem.map(_.actorSelection("/user/master"))
