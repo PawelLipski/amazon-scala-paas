@@ -36,5 +36,6 @@ case class AuctionHouse() extends Agent{
       log.info("got houseManager ref: " + manager.path)
       manager ! OpenHouse(system)
     }
+    log.info("after ask, maybe timeout")
   }
 }

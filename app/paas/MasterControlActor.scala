@@ -52,7 +52,7 @@ class MasterControlActor extends Actor {
       killAgent(agentName)
 
     case FetchActorRef(actorName) =>
-      Logger.debug("sender " + sender.path + " asked for " + actorName + " ref")
+      Logger.debug("****************sender " + sender.path + " asked for " + actorName + " ref")
       sender ! fetchActorRef(actorName)
   }
 
@@ -167,9 +167,9 @@ class MasterControlActor extends Actor {
     case KillAgent(agentName) =>
       killAgent(agentName)
 
-	case FetchActorRef(actorName) =>
-    Logger.debug("sender " + sender.path + " asked for " + actorName + " ref")
-	  sender ! fetchActorRef(actorName)
+	  case FetchActorRef(actorName) =>
+      Logger.debug("&&&&&&&&&&&&&&&&&&sender " + sender.path + " asked for " + actorName + " ref")
+	    sender ! fetchActorRef(actorName)
   }
 }
 
