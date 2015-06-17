@@ -14,6 +14,8 @@ case class AuctionHouse() extends Agent{
 
   val log = Logging(system, AuctionHouse.getClass.getName)
 
+  main(null)
+
   def main(args: Array[String]) {
     log info "*********************AuctionHouse: Auction House has been initialized!"
 
