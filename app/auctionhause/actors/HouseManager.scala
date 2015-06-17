@@ -7,7 +7,7 @@ import paas.Agent
  * Created by bj on 21.10.14.
  */
 
-class HouseManager(system: ActorSystem) extends Agent with FSM[HouseState, HouseData]{
+case class HouseManager() extends Agent with FSM[HouseState, HouseData]{
   val MAX_NUM_OF_AUCTIONS = 1
   val NUM_OF_BUYERS = 2
   val NUM_OF_SELLERS = 1
@@ -16,7 +16,7 @@ class HouseManager(system: ActorSystem) extends Agent with FSM[HouseState, House
   startWith(HouseIsClosed, EmptyHouseData)
 
   when(HouseIsClosed){
-    case Event(OpenHouse, EmptyHouseData) => {
+    case Event(OpenHouse(system), EmptyHouseData) => {
       log.info("HouseManager: House has been opened, initializing {} sellers and {} buyers", NUM_OF_SELLERS, NUM_OF_BUYERS)
       val auctionSearch = context.actorOf(Props(new AuctionSearch()), AUCTION_SEARCH_NAME)
       val sellers = (1 to NUM_OF_SELLERS).map(num => context.actorOf(Props(new Seller(num, system, MAX_NUM_OF_AUCTIONS, AUCTION_SEARCH_NAME)), "seller"+num)).toList

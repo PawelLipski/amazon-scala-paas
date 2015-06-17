@@ -58,7 +58,7 @@ class MasterControlActor extends Actor {
   def synchronize[T0](x: T0): T0 =
     launchedAgentsMap.synchronized(launchedAgentsCounters.synchronized(x))
 
-  def fetchActorRef(actorName: String) =
+  def fetchActorRef(actorName: String): Option[ActorRef] =
     synchronize(launchedAgentsMap get (actorName))
 
   def killAgent(agentName: String) {
@@ -167,7 +167,7 @@ class MasterControlActor extends Actor {
       killAgent(agentName)
 
 	case FetchActorRef(actorName) =>
-	  fetchActorRef(actorName)
+	  sender ! fetchActorRef(actorName)
   }
 }
 

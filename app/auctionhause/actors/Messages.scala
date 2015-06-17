@@ -1,6 +1,6 @@
 package auctionhause.actors
 
-import akka.actor.ActorRef
+import akka.actor.{ActorSystem, ActorRef}
 
 import scala.concurrent.duration._
 
@@ -19,7 +19,7 @@ sealed trait AuctionSearchManagementSystemMessage
 sealed trait SellerManagementSystemMessage
 
 
-case class OpenHouse() extends HouseManagementSystemMessage
+case class OpenHouse(system: ActorSystem) extends HouseManagementSystemMessage
 
 case class SeeAllAuctions(auctionSearch: ActorRef) extends BuyersManagementSystemMessage
 
