@@ -9,6 +9,7 @@ import scala.collection.mutable.MutableList
 import akka.actor.ActorRef
 import scala.collection.mutable.HashMap
 import akka.pattern.GracefulStopSupport
+import akka.util.Timeout
 
 class MasterControlActor extends Actor {
 
