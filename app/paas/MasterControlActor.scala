@@ -41,8 +41,12 @@ class MasterControlActor extends Actor {
 	  
 	  implicit val timeout = Timeout(10 seconds)
 
-      sender ! RunningAgents(launchedAgentsMap.map(x => (x._1, 
-	  	(x._2 ? ShowState).mapTo[String].value.get.get)).toMap)
+	  // TODO - Bartek: uncomment!!!!
+      //sender ! RunningAgents(launchedAgentsMap.map(x => (x._1, 
+	  //	(x._2 ? ShowState).mapTo[String].value.get.get)).toMap)
+
+	  // TODO - Bartek: comment out!!!!
+      sender ! RunningAgents(launchedAgentsMap.mapValues(x => "running").toMap)
 
     case KillAgent(agentName) =>
       killAgent(agentName)
@@ -152,6 +156,11 @@ class MasterControlActor extends Actor {
     case LaunchResult(refs) => registerLaunched(refs)
 
     case GetRunningAgents =>
+	  // TODO - Bartek: uncomment!!!!
+      //sender ! RunningAgents(launchedAgentsMap.map(x => (x._1, 
+	  //	(x._2 ? ShowState).mapTo[String].value.get.get)).toMap)
+
+	  // TODO - Bartek: comment out!!!!
       sender ! RunningAgents(launchedAgentsMap.mapValues(x => "running").toMap)
 
     case KillAgent(agentName) =>
