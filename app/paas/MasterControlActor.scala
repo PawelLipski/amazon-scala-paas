@@ -53,7 +53,7 @@ class MasterControlActor extends Actor {
 
     case FetchActorRef(actorName) =>
       Logger.debug("****************sender " + sender.path + " asked for " + actorName + " ref")
-      sender ! fetchActorRef(actorName)
+      sender ! Some(fetchActorRef(actorName))
   }
 
   def synchronize[T0](x: T0): T0 =
@@ -169,7 +169,7 @@ class MasterControlActor extends Actor {
 
 	  case FetchActorRef(actorName) =>
       Logger.debug("&&&&&&&&&&&&&&&&&&sender " + sender.path + " asked for " + actorName + " ref")
-	    sender ! fetchActorRef(actorName)
+	    sender ! Some(fetchActorRef(actorName))
   }
 }
 
