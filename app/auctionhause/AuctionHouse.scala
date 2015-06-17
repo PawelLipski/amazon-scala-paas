@@ -1,5 +1,6 @@
 package auctionhause
 
+import akka.actor.Status.Success
 import akka.actor.{ActorRef, ActorSelection, ActorSystem, Props}
 import akka.event.Logging
 import akka.util.Timeout
@@ -20,7 +21,7 @@ case class AuctionHouse() extends Agent{
 
   val log = Logging(system, AuctionHouse.getClass.getName)
 
-  implicit val timeout = Timeout(10 seconds)
+  implicit val timeout = Timeout(30 seconds)
 
   import system.dispatcher
 
@@ -31,25 +32,13 @@ case class AuctionHouse() extends Agent{
 
     //val houseManager = system.actorOf(Props(new HouseManager(system)), "manager")
 
-    val master: ActorSelection = context.actorSelection("/user/master")
+    val master: ActorSelection = context.actorSelection("akka.tcp://MasterSystem@10.0.0.240:2552/user/master")
     log.info("master selection: " + master)
-    val masterRef: Future[ActorRef] = (master ? FetchActorRef("auctionhause.actors.HouseManager1")).mapTo[ActorRef]
-    masterRef.onSuccess{
-      case ref: ActorRef => {
-        log.info("got houseManager ref: " + ref.path)
-        ref ! OpenHouse(system)
-      }
-      case _ => log.info("something is wrong")
-    }
-    masterRef.onComplete{
-      case ref: Try[ActorRef] => {
-        log.info("onCom got houseManager ref: " + ref.get.path)
+    (master ? FetchActorRef("auctionhause.actors.HouseManager1")).mapTo[ActorRef].onComplete{
+      case ref: Try[ActorRef] =>
+        log.info("got houseManager ref: " + ref.get)
         ref.get ! OpenHouse(system)
-      }
-      case _ => log.info("on Com something is wrong")
-    }
-    masterRef.onFailure{
-      case throwable : Throwable => log.info("onFailure: " + throwable)
+      case other => log.info("Something was wrong: " + other.toString)
     }
     log.info("after ask, maybe timeout")
   }
