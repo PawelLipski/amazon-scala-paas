@@ -42,7 +42,7 @@ class MasterControlActor extends Actor {
 	  implicit val timeout = Timeout(10 seconds)
 
       sender ! RunningAgents(launchedAgentsMap.map(x => (x._1, 
-	  	(x._2 ? ShowState).mapTo[Map[String, String]].value.get)).toMap)
+	  	(x._2 ? ShowState).mapTo[String].value.get.get)).toMap)
 
     case KillAgent(agentName) =>
       killAgent(agentName)
