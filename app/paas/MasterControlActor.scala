@@ -167,6 +167,7 @@ class MasterControlActor extends Actor {
       killAgent(agentName)
 
 	case FetchActorRef(actorName) =>
+    println("sender " + sender.path + " asked for " + actorName + " ref")
 	  sender ! fetchActorRef(actorName)
   }
 }

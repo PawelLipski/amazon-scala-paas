@@ -31,8 +31,7 @@ case class AuctionHouse() extends Agent{
     //val houseManager = system.actorOf(Props(new HouseManager(system)), "manager")
 
     val master: ActorSelection = context.actorSelection("/user/master")
-    val houseManager = master ? FetchActorRef("auctionhause.actors.HouseManager1")
-    houseManager.mapTo[ActorRef].map{ manager =>
+    (master ? FetchActorRef("auctionhause.actors.HouseManager1")).mapTo[ActorRef].map{ manager =>
       println("got houseManager ref: " + manager.path)
       manager ! OpenHouse(system)
     }
