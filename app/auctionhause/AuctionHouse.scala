@@ -31,7 +31,7 @@ case class AuctionHouse() extends Agent{
 
     //val houseManager = system.actorOf(Props(new HouseManager(system)), "manager")
 
-    val master: ActorSelection = context.actorSelection("/user/master")
+    val master: ActorSelection = context.actorSelection("akka.tcp://MasterSystem@10.0.0.240:2552/user/master")
     log.info("master selection: " + master)
     val masterRef: Future[ActorRef] = (master ? FetchActorRef("auctionhause.actors.HouseManager1")).mapTo[ActorRef]
     masterRef.onSuccess{
