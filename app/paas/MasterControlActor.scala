@@ -40,7 +40,7 @@ class MasterControlActor extends Actor {
       killAgent(agentName)
 
 	case FetchActorRef(actorName) =>
-	  fetchActorName(actorName)
+	  fetchActorRef(actorName)
   }
 
   def synchronize[T0](x: T0): T0 =
@@ -148,7 +148,7 @@ class MasterControlActor extends Actor {
       killAgent(agentName)
 
 	case FetchActorRef(actorName) =>
-	  fetchActorName(actorName)
+	  fetchActorRef(actorName)
   }
 }
 
