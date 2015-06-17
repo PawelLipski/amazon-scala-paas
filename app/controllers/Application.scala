@@ -35,12 +35,15 @@ object Application extends Controller {
       } map { case (jarClassLoader, zip) =>{
           val classNames = Stream.continually(zip.getNextEntry).takeWhile(_ != null)
             .filter(entry => !entry.isDirectory && entry.getName.endsWith(".class"))
-            .map(entry => entry.getName.replace("/", ".").replace("$", "").dropRight(".class".length))
+            .map(entry => entry.getName.replace("/", ".").dropRight(".class".length))
             .filter(entry => classOf[Agent].isAssignableFrom(jarClassLoader.loadClass(entry)))
             .filter(entry => !jarClassLoader.loadClass(entry).isInterface)
-          println("Found classes: " + classNames.toList)
-          classNames.toList
-        }
+          val classes = classNames.map( name =>
+              name.replace("$", "")
+          ).toList
+          println("Found classes: " + classes)
+          classes
+      }
       }
     } yield {
         x.getName -> test.opt.getOrElse(List.empty)
