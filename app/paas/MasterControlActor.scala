@@ -137,6 +137,11 @@ class MasterControlActor extends Actor {
       }
     case LaunchResult(refs) => registerLaunched(refs)
 
+    case GetRunningAgents =>
+      sender ! RunningAgents(launchedAgentsMap.mapValues(x => "running").toMap)
+
+    case KillAgent(agentName) =>
+      killAgent(agentName)
   }
 }
 
