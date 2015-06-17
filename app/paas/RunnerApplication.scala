@@ -116,7 +116,7 @@ object RunnerApplication {
   import akka.pattern.ask
 
   def getListOfRunning(implicit tm: Timeout): Future[RunningAgents] =
-    (getMasterActor ? GetRunningAgents)
+    (getMasterActor.get ? GetRunningAgents)
       .mapTo[RunningAgents]
 
   def performStop(name: String) {
