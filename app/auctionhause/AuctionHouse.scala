@@ -20,7 +20,7 @@ case class AuctionHouse() extends Agent{
 
   val log = Logging(system, AuctionHouse.getClass.getName)
 
-  implicit val timeout = Timeout(30 seconds)
+  implicit val timeout = Timeout(10 seconds)
 
   import system.dispatcher
 
