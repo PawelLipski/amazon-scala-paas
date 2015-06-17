@@ -6,6 +6,8 @@ import java.net.URLClassLoader
 import java.nio.file.Paths
 import java.util.zip.ZipInputStream
 
+import scala.collection.immutable.ListMap
+
 import paas._
 import play.api._
 import play.api.mvc._
@@ -53,7 +55,7 @@ object Application extends Controller {
     val runningAgents = RunnerApplication.getListOfRunning(30 seconds)
 
     runningAgents.map(_.agents).map { agents =>
-      Ok(views.html.index("You can send your new application here.", indexedData, agents))
+      Ok(views.html.index("You can send your new application here.", indexedData, ListMap(agents.toSeq.sortBy(_._1):_*)))
     }
   }
 
