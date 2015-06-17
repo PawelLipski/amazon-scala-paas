@@ -2,9 +2,11 @@ package auctionhause
 
 import akka.actor.{ActorRef, ActorSelection, ActorSystem, Props}
 import akka.event.Logging
+import akka.util.Timeout
 import auctionhause.actors.{HouseManager, OpenHouse}
 import paas.{FetchActorRef, Agent}
 import akka.pattern.ask
+import scala.concurrent.duration._
 
 import scala.concurrent.Future
 
@@ -16,6 +18,8 @@ case class AuctionHouse() extends Agent{
   val system = ActorSystem("AuctionHouse")
 
   val log = Logging(system, AuctionHouse.getClass.getName)
+
+  implicit val timeout = Timeout(30 seconds)
 
   main(null)
 
