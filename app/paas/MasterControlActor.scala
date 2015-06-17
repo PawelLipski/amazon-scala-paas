@@ -123,7 +123,6 @@ class MasterControlActor extends Actor {
 
         Logger.debug(toSent.toList.toString)
         sender ! LaunchRequest(toSent.toList)
-		Thread sleep 500
 
         if (currentAgents.length == slaveCount) {
           currentAgents.clear

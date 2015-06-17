@@ -82,7 +82,8 @@ object Application extends Controller {
       val values = req.get.map(v => (v._1, v._2.head.toInt))
       RunnerApplication.issueActionToMaster(slaves, values)
     }
-    Redirect("/");
+	Thread sleep 500
+    Redirect("/")
   }
 
   def kill = Action { req =>
@@ -97,7 +98,6 @@ object Application extends Controller {
     }.getOrElse("error" -> "not found")
     Redirect(routes.Application.index()).flashing(result)
   }
-
 
   def copyViaSCP(input: File, targetDirectory: String, authKeypath: String) = {
     val targetFile = targetDirectory match {
