@@ -14,7 +14,7 @@ import scala.language.postfixOps
 
 object RunnerApplication {
 
-  var system: ActorSystem = null
+  var system: Option[ActorSystem] = None
 
   def main(args: Array[String]): Unit = {
     if (args.isEmpty || args.head == "Master")
@@ -119,6 +119,13 @@ object RunnerApplication {
     (getMasterActor ? GetRunningAgents)
       .mapTo[RunningAgents]
 
-  def performStop(name: String) =
-    getMasterActor ! KillAgent(name)
+  def performStop(name: String) {
+    val master: Option[ActorSystem] = getMasterSystem
+    if (master.isDefined) {
+      val system = master.get
+      val ref = system.actorSelection("/user/master")
+      ref ! KillAgent(name)
+    }
+  }
 }
+
