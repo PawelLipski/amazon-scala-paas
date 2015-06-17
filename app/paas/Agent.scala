@@ -1,6 +1,5 @@
 package paas
 
-import akka.actor.ActorRef
 import akka.actor.Actor
 
 trait Agent extends Actor {

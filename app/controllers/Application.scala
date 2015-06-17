@@ -31,13 +31,16 @@ object Application extends Controller {
       test = {
         managed(new URLClassLoader(Array(Paths.get(x.toString).toUri.toURL), this.getClass.getClassLoader)) and
           managed(new ZipInputStream(new FileInputStream(x)))
-      } map { case (jarClassLoader, zip) =>
+      } map { case (jarClassLoader, zip) =>{
+
         val classNames = Stream.continually(zip.getNextEntry).takeWhile(_ != null)
           .filter(entry => !entry.isDirectory && entry.getName.endsWith(".class"))
           .map(entry => entry.getName.replace("/", ".").dropRight(".class".length))
           .filter(entry => classOf[Agent].isAssignableFrom(jarClassLoader.loadClass(entry)))
           .filter(entry => !jarClassLoader.loadClass(entry).isInterface)
+        println("Found classes: " + classNames)
         classNames.toList
+      }
       }
     } yield {
         x.getName -> test.opt.getOrElse(List.empty)
