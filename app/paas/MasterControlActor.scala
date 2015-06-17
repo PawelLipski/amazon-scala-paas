@@ -51,8 +51,9 @@ class MasterControlActor extends Actor {
     case KillAgent(agentName) =>
       killAgent(agentName)
 
-	case FetchActorRef(actorName) =>
-	  fetchActorRef(actorName)
+    case FetchActorRef(actorName) =>
+      Logger.debug("sender " + sender.path + " asked for " + actorName + " ref")
+      sender ! fetchActorRef(actorName)
   }
 
   def synchronize[T0](x: T0): T0 =
