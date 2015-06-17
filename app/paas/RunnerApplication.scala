@@ -14,7 +14,7 @@ import scala.language.postfixOps
 
 object RunnerApplication {
 
-  var system: Option[ActorSystem] = None
+  var system: ActorSystem = null
 
   def main(args: Array[String]): Unit = {
     if (args.isEmpty || args.head == "Master")
@@ -103,7 +103,7 @@ object RunnerApplication {
     }
   }
 
-  def getMasterSystem: Option[ActorSystem] = this.system //.find(system => system.name == "MasterSystem")
+  def getMasterSystem: ActorSystem = this.system //.find(system => system.name == "MasterSystem")
 
   def getMasterActor = {
     Logger.info(getMasterSystem.toString)
