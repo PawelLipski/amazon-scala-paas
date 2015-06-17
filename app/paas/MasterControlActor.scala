@@ -17,6 +17,8 @@ class MasterControlActor extends Actor {
 
   var currentAgents: MutableList[ActorRef] = MutableList()
 
+  import akka.pattern.ask
+
   def receive = {
 
     case Launch(slaves, params) =>
