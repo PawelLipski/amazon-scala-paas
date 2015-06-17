@@ -1,5 +1,6 @@
 package auctionhause
 
+import akka.actor.Status.Success
 import akka.actor.{ActorRef, ActorSelection, ActorSystem, Props}
 import akka.event.Logging
 import akka.util.Timeout
@@ -33,7 +34,7 @@ case class AuctionHouse() extends Agent{
     val master: ActorSelection = context.actorSelection("akka.tcp://MasterSystem@10.0.0.240:2552/user/master")
     log.info("master selection: " + master)
     (master ? FetchActorRef("auctionhause.actors.HouseManager1")).mapTo[ActorRef].onComplete{
-      case ref: ActorRef =>
+      case Success(ref: ActorRef) =>
         log.info("got houseManager ref: " + ref.path)
         ref ! OpenHouse(system)
       case other => log.info("Something was wrong: " + other.toString)
