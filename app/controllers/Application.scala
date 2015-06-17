@@ -89,7 +89,7 @@ object Application extends Controller {
   def kill = Action { req =>
     Logger.info(s"received request $req")
     val result = req.body.asFormUrlEncoded.map { form =>
-	  Logger.info("form values: " + form.map(_._1))
+	  Logger.info("form values: " + form.map(_._2.head._1))
       val values = form.map(v => (v._1, v._2.head))
 	  Logger.info("agenttokill: " + values.get("agenttokill"))
       values.get("agenttokill").map { name =>
