@@ -97,15 +97,15 @@ class MasterControlActor extends Actor {
 
         Logger.debug("current agents: " + currentAgents)
         Logger.debug("Params: " + params)
-        Logger.debug("TODO: " + todo)
+        //Logger.debug("TODO: " + todo)
 
         var i = 0
         while (taken != todo) {
-          Logger.debug("i: " + i)
+          //Logger.debug("i: " + i)
           val choice = Math.min(todo - taken, params(i)._2)
           taken += choice
-          Logger.debug("params(i)._2: " + params(i)._2)
-          Logger.debug("taken: " + choice)
+          //Logger.debug("params(i)._2: " + params(i)._2)
+          //Logger.debug("taken: " + choice)
 
           if (params(i)._2 >= todo)
             params(i) = (params(i)._1, params(i)._2 - todo)
@@ -123,6 +123,7 @@ class MasterControlActor extends Actor {
 
         Logger.debug(toSent.toList.toString)
         sender ! LaunchRequest(toSent.toList)
+		Thread sleep 500
 
         if (currentAgents.length == slaveCount) {
           currentAgents.clear
@@ -135,6 +136,7 @@ class MasterControlActor extends Actor {
         else
           context.become(active(slaveCount, params, sent, perSlaveMin, 0))
       }
+
     case LaunchResult(refs) => registerLaunched(refs)
 
     case GetRunningAgents =>
