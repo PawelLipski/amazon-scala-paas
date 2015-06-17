@@ -92,7 +92,7 @@ object Application extends Controller {
 	  Logger.info("form values: " + form.map(_._2.head.split(",")(0).substring(1)))
       val values = form.map(v => (v._1, v._2.head.split(",")(0).substring(1)))
 	  //Logger.info("agenttokill: " + values.get("agenttokill"))
-      values.get("agenttokill").map { (_, name) =>
+      values.get("agenttokill").map { name =>
         Logger.debug(s"about to kill agent $name")
         RunnerApplication.performStop(name)
         "success" -> "ok"
