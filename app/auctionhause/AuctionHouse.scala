@@ -21,6 +21,8 @@ case class AuctionHouse() extends Agent{
 
   implicit val timeout = Timeout(30 seconds)
 
+  import system.dispatcher
+
   main(null)
 
   def main(args: Array[String]) {
