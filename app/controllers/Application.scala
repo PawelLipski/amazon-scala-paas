@@ -90,6 +90,8 @@ object Application extends Controller {
     Logger.info(s"received request $req")
     val result = req.body.asFormUrlEncoded.map { form =>
       val values = form.map(v => (v._1, v._2.head))
+	  Logger.info("form values: " + values)
+	  Logger.info("agenttokill: " + values.get("agenttokill"))
       values.get("agenttokill").map { name =>
         Logger.debug(s"about to kill agent $name")
         RunnerApplication.performStop(name)
