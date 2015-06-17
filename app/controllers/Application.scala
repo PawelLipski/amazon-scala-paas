@@ -82,7 +82,7 @@ object Application extends Controller {
       val values = req.get.map(v => (v._1, v._2.head.toInt))
       RunnerApplication.issueActionToMaster(slaves, values)
     }
-	Thread sleep 500
+	Thread sleep 2000
     Redirect("/")
   }
 
