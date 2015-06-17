@@ -106,6 +106,9 @@ object RunnerApplication {
   def getMasterSystem: Option[ActorSystem] = this.system //.find(system => system.name == "MasterSystem")
 
   def getMasterActor = {
+    Logger.info(getMasterSystem.toString)
+    Logger.info(getMasterSystem.map(_.actorSelection("/user/master")).toString)
+
     getMasterSystem.map(_.actorSelection("/user/master"))
       .get.resolveOne(15 seconds).value.get.get
   }
