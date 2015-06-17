@@ -34,7 +34,8 @@ class MasterControlActor extends Actor {
 
 
     case GetRunningAgents =>
-      sender ! RunningAgents(launchedAgentsMap.mapValues(x => "running").toMap)
+      sender ! RunningAgents(launchedAgentsMap.map(x => (x._1, 
+	  	(x._2 ? ShowState).mapTo[Map[String, String]].value.get)).toMap)
 
     case KillAgent(agentName) =>
       killAgent(agentName)
