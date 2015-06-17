@@ -9,6 +9,7 @@ import akka.pattern.ask
 import scala.concurrent.duration._
 
 import scala.concurrent.Future
+import scala.util.Try
 
 /**
  * Created by bj on 21.10.14.
@@ -39,6 +40,16 @@ case class AuctionHouse() extends Agent{
         ref ! OpenHouse(system)
       }
       case _ => log.info("something is wrong")
+    }
+    masterRef.onComplete{
+      case ref: Try[ActorRef] => {
+        log.info("onCom got houseManager ref: " + ref.get.path)
+        ref.get ! OpenHouse(system)
+      }
+      case _ => log.info("on Com something is wrong")
+    }
+    masterRef.onFailure{
+      case throwable : Throwable => log.info("onFailure: " + throwable)
     }
     log.info("after ask, maybe timeout")
   }
