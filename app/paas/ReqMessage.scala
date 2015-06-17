@@ -25,3 +25,5 @@ case object GetRunningAgents
 case class RunningAgents(agents: Map[String, String])
 
 case class KillAgent(agentName: String)
+
+case class FetchActorRef(agentName: String)
