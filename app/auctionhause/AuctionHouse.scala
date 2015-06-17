@@ -8,7 +8,7 @@ import paas.Agent
 /**
  * Created by bj on 21.10.14.
  */
-object AuctionHouse extends Agent{
+case class AuctionHouse() extends Agent{
 
   val system = ActorSystem("AuctionHouse")
 
