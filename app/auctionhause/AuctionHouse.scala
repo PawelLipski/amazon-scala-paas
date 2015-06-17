@@ -10,6 +10,7 @@ import akka.pattern.ask
 import scala.concurrent.duration._
 
 import scala.concurrent.Future
+import scala.util.Try
 
 /**
  * Created by bj on 21.10.14.
@@ -34,7 +35,7 @@ case class AuctionHouse() extends Agent{
     val master: ActorSelection = context.actorSelection("akka.tcp://MasterSystem@10.0.0.240:2552/user/master")
     log.info("master selection: " + master)
     (master ? FetchActorRef("auctionhause.actors.HouseManager1")).mapTo[ActorRef].onComplete{
-      case ref: Success =>
+      case ref: Try[ActorRef] =>
         log.info("got houseManager ref: " + ref.get)
         ref.get ! OpenHouse(system)
       case other => log.info("Something was wrong: " + other.toString)
