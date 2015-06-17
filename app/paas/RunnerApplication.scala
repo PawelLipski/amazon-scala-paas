@@ -107,7 +107,7 @@ object RunnerApplication {
 
   def getMasterActor = {
     getMasterSystem.map(_.actorSelection("/user/master"))
-      .get.resolveOne(5 seconds).value.get.get
+      .get.resolveOne(15 seconds).value.get.get
   }
 
   import akka.pattern.ask
