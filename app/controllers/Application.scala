@@ -96,7 +96,7 @@ object Application extends Controller {
         Logger.debug(s"about to kill agent $name")
         RunnerApplication.performStop(name)
         "success" -> "ok"
-      }.getOrElse("error" -> "query not found")
+      }//.getOrElse("error" -> "query not found")
     }.getOrElse("error" -> "not found")
     Redirect(routes.Application.index()).flashing(result)
   }
