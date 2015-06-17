@@ -38,7 +38,7 @@ object Application extends Controller {
           .map(entry => entry.getName.replace("/", ".").dropRight(".class".length))
           .filter(entry => classOf[Agent].isAssignableFrom(jarClassLoader.loadClass(entry)))
           .filter(entry => !jarClassLoader.loadClass(entry).isInterface)
-        println("Found classes: " + classNames)
+        println("Found classes: " + classNames.toList)
         classNames.toList
       }
       }
