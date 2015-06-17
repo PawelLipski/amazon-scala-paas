@@ -32,18 +32,12 @@ case class AuctionHouse() extends Agent{
 
     val master: ActorSelection = context.actorSelection("akka.tcp://MasterSystem@10.0.0.240:2552/user/master")
     log.info("master selection: " + master)
-    val masterRef: Future[ActorRef] = (master ? FetchActorRef("auctionhause.actors.HouseManager1")).mapTo[ActorRef]
-    masterRef.onSuccess{
-      case ref: ActorRef => {
+    (master ? FetchActorRef("auctionhause.actors.HouseManager1")).mapTo[ActorRef].onComplete{
+      case ref: ActorRef =>
         log.info("got houseManager ref: " + ref.path)
         ref ! OpenHouse(system)
-      }
-      case _ => log.info("something is wrong")
+      case other => log.info("Something was wrong: " + other.toString)
     }
-    masterRef.onFailure{
-      case throwable : Throwable => log.info("onFailure: " + throwable)
-    }
-    log.info("after ask, maybe timeout")
     log.info("after ask, maybe timeout")
   }
 }
