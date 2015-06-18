@@ -42,8 +42,8 @@ class MasterControlActor extends Actor {
     case GetRunningAgents =>
 	  
 	  Thread sleep 2000
-	  Logger info launchedAgentsMap.toString
-	  Logger info launchedAgentsMap.map(x => (x._1, (x._2 ? ShowState).value)).toString
+	  //Logger info launchedAgentsMap.toString
+	  //Logger info launchedAgentsMap.map(x => (x._1, (x._2 ? ShowState).value)).toString
 
       sender ! RunningAgents(launchedAgentsMap.map(x => 
 	    (x._1, Await.result(x._2 ? ShowState, 15 seconds).asInstanceOf[String])).toMap)
@@ -161,10 +161,10 @@ class MasterControlActor extends Actor {
     case GetRunningAgents =>
 	  Thread sleep 2000
 	  Logger info launchedAgentsMap.toString
-	  Logger info launchedAgentsMap.map(x => (x._1, (x._2 ? ShowState).value)).toString
+	  //Logger info launchedAgentsMap.map(x => (x._1, (x._2 ? ShowState).value)).toString
 
-      sender ! RunningAgents(launchedAgentsMap.map(x => (x._1, 
-	    (x._2 ? ShowState).mapTo[String].value.get.get)).toMap)
+      sender ! RunningAgents(launchedAgentsMap.map(x => 
+	    (x._1, Await.result(x._2 ? ShowState, 15 seconds).asInstanceOf[String])).toMap)
 
       //sender ! RunningAgents(launchedAgentsMap.mapValues(x => "running").toMap)
 
