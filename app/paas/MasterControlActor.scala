@@ -40,6 +40,7 @@ class MasterControlActor extends Actor {
 
     case GetRunningAgents =>
 	  
+	  Thread sleep 2000
       sender ! RunningAgents(launchedAgentsMap.map(x => (x._1, 
 	    (x._2 ? ShowState).mapTo[String].value.get.get)).toMap)
 
