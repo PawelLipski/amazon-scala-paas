@@ -1,18 +1,17 @@
 package auctionhause
 
 import akka.actor.Status.Success
-import akka.actor.{ActorRef, ActorSelection, ActorSystem, Props}
+import akka.actor.{ActorRef, ActorSelection, ActorSystem, Props, Actor}
 import akka.event.Logging
 import akka.util.Timeout
 import paas.{FetchActorRef, Agent, ShowState}
 import akka.pattern.ask
+import akka.event.LoggingReceive
 import scala.concurrent.duration._
 
 import scala.concurrent.Future
 import scala.concurrent.Await
 import scala.util.Try
-
-case object MakeBid
 
 case class Buyer() extends Agent {
 
@@ -27,11 +26,25 @@ case class Buyer() extends Agent {
   var biddingCurrent = 300
 
   val master: ActorSelection = context.actorSelection("akka.tcp://MasterSystem@10.0.0.240:2552/user/master")
-  val auction1 = Await.result(master ? FetchActorRef("auctionhause.Auction1"), 15 seconds).asInstanceOf[ActorRef]
+  var auction1: ActorRef = _
 
-  self ! MakeBid
+  case object MakeBid
+  case object Init
 
+  context.system.scheduler.scheduleOnce(5 seconds, self, Init)
+  
   override def receive = {
+	case ShowState =>
+	  log info ("Received show state from " + sender)
+	  sender ! "initializing"
+
+	case Init =>
+	  auction1 = Await.result(master ? FetchActorRef("auctionhause.Auction1"), 15 seconds).asInstanceOf[ActorRef]
+	  context become inited
+	  self ! MakeBid
+  }
+
+  def inited = LoggingReceive {
 	case ShowState =>
 	  log info ("Received show state from " + sender)
 	  sender ! ("bidding for one ton of bananas at $" + biddingCurrent)
