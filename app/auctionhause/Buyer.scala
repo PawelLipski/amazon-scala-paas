@@ -31,18 +31,10 @@ case class Buyer() extends Agent {
 
   self ! MakeBid
 
-  /*.onComplete {
-    case ref: Try[ActorRef] =>
-      log.info("Got Auction1 ref: " + ref.get)
-      ref.get ! Bid(600)
-    case other => 
-	  log.info("Something was wrong: " + other.toString)
-  }*/
-
   override def receive = {
 	case ShowState =>
 	  log info ("Received show state from " + sender)
-	  sender ! ("Bidding at $" + 600)
+	  sender ! ("bidding for one ton of bananas at $" + biddingCurrent)
 	case MakeBid =>
 	  auction1 ! Bid(biddingCurrent)
 	  biddingCurrent += 100
