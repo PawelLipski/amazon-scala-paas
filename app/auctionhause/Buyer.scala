@@ -8,6 +8,7 @@ import paas.{FetchActorRef, Agent, ShowState}
 import akka.pattern.ask
 import akka.event.LoggingReceive
 import scala.concurrent.duration._
+import scala.concurrent.ExecutionContext
 
 import scala.concurrent.Future
 import scala.concurrent.Await
@@ -15,15 +16,14 @@ import scala.util.Try
 
 case class Buyer() extends Agent {
 
-  val system = ActorSystem("AuctionHouse")
-  val log = Logging(system, "Buyer")
+  //val system = ActorSystem("AuctionHouse")
+  //val log = Logging(system, "Buyer")
 
   import scala.language.postfixOps
+  import ExecutionContext.Implicits.global
   implicit val timeout = Timeout(30 seconds)
 
-  import system.dispatcher
-
-  var biddingCurrent = 300
+  var biddingCurrent = 200
 
   val master: ActorSelection = context.actorSelection("akka.tcp://MasterSystem@10.0.0.240:2552/user/master")
   var auction1: ActorRef = _
@@ -35,7 +35,7 @@ case class Buyer() extends Agent {
   
   override def receive = {
 	case ShowState =>
-	  log info ("Received show state from " + sender)
+	  //log info ("Received show state from " + sender)
 	  sender ! "initializing"
 
 	case Init =>
@@ -46,11 +46,11 @@ case class Buyer() extends Agent {
 
   def inited = LoggingReceive {
 	case ShowState =>
-	  log info ("Received show state from " + sender)
+	  //log info ("Received show state from " + sender)
 	  sender ! ("bidding for one ton of bananas at $" + biddingCurrent)
 	case MakeBid =>
-	  auction1 ! Bid(biddingCurrent)
 	  biddingCurrent += 100
+	  auction1 ! Bid(biddingCurrent)
 	  context.system.scheduler.scheduleOnce(5 seconds, self, MakeBid)
   }
 }
