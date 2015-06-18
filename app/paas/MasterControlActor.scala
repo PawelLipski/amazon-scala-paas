@@ -171,7 +171,7 @@ class MasterControlActor extends Actor {
     case KillAgent(agentName) =>
       killAgent(agentName)
 
-	  case FetchActorRef(actorName) =>
+    case FetchActorRef(actorName) =>
       Logger.debug("&&&&&&&&&&&&&&&&&&sender " + sender.path + " asked for " + actorName + " ref")
 	    sender ! fetchActorRef(actorName).getOrElse(None)
   }

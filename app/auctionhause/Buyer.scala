@@ -9,7 +9,10 @@ import akka.pattern.ask
 import scala.concurrent.duration._
 
 import scala.concurrent.Future
+import scala.concurrent.Await
 import scala.util.Try
+
+case object MakeBid
 
 case class Buyer() extends Agent {
 
@@ -21,19 +24,29 @@ case class Buyer() extends Agent {
 
   import system.dispatcher
 
+  var biddingCurrent = 300
+
   val master: ActorSelection = context.actorSelection("akka.tcp://MasterSystem@10.0.0.240:2552/user/master")
-  (master ? FetchActorRef("auctionhause.Auction1")).mapTo[ActorRef].onComplete {
+  val auction1 = Await.result(master ? FetchActorRef("auctionhause.Auction1"), 15 seconds).asInstanceOf[ActorRef]
+
+  self ! MakeBid
+
+  /*.onComplete {
     case ref: Try[ActorRef] =>
       log.info("Got Auction1 ref: " + ref.get)
       ref.get ! Bid(600)
     case other => 
 	  log.info("Something was wrong: " + other.toString)
-  }
+  }*/
 
   override def receive = {
 	case ShowState =>
 	  log info ("Received show state from " + sender)
 	  sender ! ("Bidding at $" + 600)
+	case MakeBid =>
+	  auction1 ! Bid(biddingCurrent)
+	  biddingCurrent += 100
+	  context.system.scheduler.scheduleOnce(5 seconds, self, MakeBid)
   }
 }
 
