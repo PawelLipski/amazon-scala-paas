@@ -1,6 +1,7 @@
 package paas
 
 import akka.actor.Props
+import scala.concurrent.Await
 import akka.actor.Actor
 import sys.process._
 import play.Logger
@@ -44,8 +45,8 @@ class MasterControlActor extends Actor {
 	  Logger info launchedAgentsMap.toString
 	  Logger info launchedAgentsMap.map(x => (x._1, (x._2 ? ShowState).value)).toString
 
-      sender ! RunningAgents(launchedAgentsMap.map(x => (x._1, 
-	    (x._2 ? ShowState).mapTo[String].value.get.get)).toMap)
+      sender ! RunningAgents(launchedAgentsMap.map(x => 
+	    (x._1, Await.result(x._2 ? ShowState, 15 seconds).asInstanceOf[String])).toMap)
 
       //sender ! RunningAgents(launchedAgentsMap.mapValues(x => "running").toMap)
 
