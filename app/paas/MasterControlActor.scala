@@ -40,6 +40,8 @@ class MasterControlActor extends Actor {
 
 
     case GetRunningAgents =>
+
+	  Thread sleep 2000
 	  
 	  //Logger info launchedAgentsMap.toString
 	  //Logger info launchedAgentsMap.map(x => (x._1, (x._2 ? ShowState).value)).toString
