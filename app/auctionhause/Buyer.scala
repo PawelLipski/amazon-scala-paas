@@ -31,7 +31,7 @@ case class Buyer() extends Agent {
   case object MakeBid
   case object Init
 
-  context.system.scheduler.scheduleOnce(10 seconds, self, Init)
+  context.system.scheduler.scheduleOnce(5 seconds, self, Init)
   
   override def receive = {
 	case ShowState =>
@@ -39,7 +39,7 @@ case class Buyer() extends Agent {
 	  sender ! "initializing"
 
 	case Init =>
-	  auction1 = Await.result(master ? FetchActorRef("auctionhause.Auction1"), 15 seconds).asInstanceOf[ActorRef]
+	  auction1 = Await.result(master ? FetchActorRef("auctionhause.Auction1"), 2 seconds).asInstanceOf[ActorRef]
 	  context become inited
 	  self ! MakeBid
   }
