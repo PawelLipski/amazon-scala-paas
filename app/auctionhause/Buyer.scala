@@ -31,7 +31,7 @@ case class Buyer() extends Agent {
   case object MakeBid
   case object Init
 
-  context.system.scheduler.scheduleOnce(5 seconds, self, Init)
+  context.system.scheduler.scheduleOnce(10 seconds, self, Init)
   
   override def receive = {
 	case ShowState =>
