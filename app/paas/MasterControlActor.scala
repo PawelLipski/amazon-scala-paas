@@ -154,6 +154,7 @@ class MasterControlActor extends Actor {
     case LaunchResult(refs) => registerLaunched(refs)
 
     case GetRunningAgents =>
+	  Logger info launchedAgentsMap.toString
       sender ! RunningAgents(launchedAgentsMap.map(x => (x._1, 
 	    (x._2 ? ShowState).mapTo[String].value.get.get)).toMap)
 
