@@ -5,7 +5,7 @@ import akka.actor.{ActorRef, ActorSelection, ActorSystem, Props}
 import akka.event.Logging
 import akka.util.Timeout
 import auctionhause.actors.{HouseManager, OpenHouse}
-import paas.{FetchActorRef, Agent}
+import paas.{FetchActorRef, Agent, ShowState}
 import akka.pattern.ask
 import scala.concurrent.duration._
 
@@ -21,6 +21,7 @@ case class AuctionHouse() extends Agent{
 
   val log = Logging(system, AuctionHouse.getClass.getName)
 
+  import scala.language.postfixOps
   implicit val timeout = Timeout(30 seconds)
 
   import system.dispatcher
@@ -34,7 +35,7 @@ case class AuctionHouse() extends Agent{
 
     val master: ActorSelection = context.actorSelection("akka.tcp://MasterSystem@10.0.0.240:2552/user/master")
     log.info("master selection: " + master)
-    (master ? FetchActorRef("auctionhause.actors.HouseManager1")).mapTo[ActorRef].onComplete{
+    (master ? FetchActorRef("auctionhause.actors.HouseManager1")).mapTo[ActorRef].onComplete {
       case ref: Try[ActorRef] =>
         log.info("got houseManager ref: " + ref.get)
         ref.get ! OpenHouse(system)
@@ -42,4 +43,7 @@ case class AuctionHouse() extends Agent{
     }
     log.info("after ask, maybe timeout")
   }
+
+  override def state = "initialized"
 }
+

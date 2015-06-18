@@ -31,8 +31,7 @@ class Buyer(id: Int, system: ActorSystem) extends Agent with FSM[BuyerState, Buy
     }
   }
 
-
-  onTransition{
+  onTransition {
     case NotBiding -> WaitingForAuction => {
       for((WatchingNoAuction, SearchingFor(auctionSearch, keyWord)) <- Some(stateData, nextStateData)) {
         system.scheduler.scheduleOnce(SEARCH_DELAY, auctionSearch, Search(keyWord))
@@ -45,7 +44,7 @@ class Buyer(id: Int, system: ActorSystem) extends Agent with FSM[BuyerState, Buy
         val price = rand.nextInt(MAX_BID_PRICE) * id/2 + 100/id
         log.info("Auction: {} auctions are going to be raised now", auctions.length)
         auctions.foreach(_ ! Bid(price))
-        //for (i <- 1 until (rand.nextInt(id) + 2)){
+        //for (i <- 1 until (rand.nextInt(id) + 2)) {
         //  system.scheduler.scheduleOnce(id seconds, context.parent, Bid(auction, price + ((rand.nextInt(i + 2) + 2) * 10)))
         //}
       }
