@@ -32,6 +32,7 @@ case class Buyer() extends Agent {
 
   override def receive = {
 	case ShowState =>
+	  log info ("Received show state from " + sender)
 	  sender ! ("Bidding at $" + 600)
   }
 }

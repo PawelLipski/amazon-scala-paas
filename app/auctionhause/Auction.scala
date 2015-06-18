@@ -28,6 +28,7 @@ case class Auction() extends Agent {
 
   override def receive = {
 	case ShowState =>
+	  log info ("Received show state from " + sender)
 	  sender ! (product + " at $" + maxBid)
 	case Bid(price) =>
 	  if (price > maxBid)
