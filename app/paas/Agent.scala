@@ -4,18 +4,23 @@ import akka.actor.Actor
 
 trait Agent extends Actor {
   
-	def receive = {
-		case Run(num) => run(num)
+	final def receive = {
+		case Run(args) => init(args)
 		case ShowState => sender ! state
 		case any => getMessage(any)
 	}
-
-    def run(number: Int) = {} // abstrakcyjna
-    def state: String = "" // abstrakcyjna
       
-    def getMessage(msg: Any) = {
-      sender ! msg
-    }
-      
+    def getMessage(msg: Any): PartialFunction[Any,Unit]
+    def init(args: Any*)
+    def state: String
+    def id: String = this.getClass().getCanonicalName()
+    
+    def getAvailableResponses: List[Class[Any]] = List()
+    def saveToBlackboard(key: String, value: Any) = {}
+    def takeFromBlackboard(key: String): Any = {}
+    def joinGroup(group: AgentGroup) = {}
+    def leaveGroup(group: AgentGroup) = {}
+    def listGroupsContaining: List[AgentGroup] = List()
+    
     final override def toString = state
 }

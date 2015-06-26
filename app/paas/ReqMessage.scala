@@ -8,7 +8,7 @@ trait ResMessage
 
 case object ReadyToLaunch extends ResMessage
 
-case class Run(num: Int) extends ReqMessage
+case class Run(args: Any*) extends ReqMessage
 
 case object Stop extends ReqMessage
 

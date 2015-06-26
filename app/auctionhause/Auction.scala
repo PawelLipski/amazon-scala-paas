@@ -14,7 +14,7 @@ import scala.util.Try
 
 case class Bid(price: Int)
 
-case class Auction() extends Agent {
+case class Auction(val num: Int) extends Agent {
 
   //val system = ActorSystem("AuctionHouse")
   //val log = Logging(system, "Auction")
@@ -25,14 +25,16 @@ case class Auction() extends Agent {
 
   val product = "one ton of bananas"
   var maxBid = 100
-
-  override def receive = {
-	case ShowState =>
-	  //log info ("Received show state from " + sender)
-	  sender ! ("selling " + product + " for $" + maxBid)
-	case Bid(price) =>
+  
+  override def init(args: Any*) = {}
+  override def id: String = this.getClass().getCanonicalName() + num.toString
+  
+  override def getMessage(msg: Any) = {
+    case Bid(price) =>
 	  if (price > maxBid)
 	    maxBid = price
   }
+  
+  override def state = "selling " + product + " for $" + maxBid
 }
 

@@ -14,7 +14,7 @@ import scala.concurrent.Future
 import scala.concurrent.Await
 import scala.util.Try
 
-case class Buyer() extends Agent {
+case class Buyer(val num: Int) extends Agent {
 
   //val system = ActorSystem("AuctionHouse")
   //val log = Logging(system, "Buyer")
@@ -33,11 +33,7 @@ case class Buyer() extends Agent {
 
   context.system.scheduler.scheduleOnce(5 seconds, self, Init)
   
-  override def receive = {
-	case ShowState =>
-	  //log info ("Received show state from " + sender)
-	  sender ! "initializing"
-
+  override def getMessage(msg: Any) = {
 	case Init =>
 	  auction1 = Await.result(master ? FetchActorRef("auctionhause.Auction1"), 2 seconds).asInstanceOf[ActorRef]
 	  context become inited
@@ -53,5 +49,11 @@ case class Buyer() extends Agent {
 	  auction1 ! Bid(biddingCurrent)
 	  context.system.scheduler.scheduleOnce(5 seconds, self, MakeBid)
   }
+  
+  override def init(args: Any*) = {}
+  override def id: String = this.getClass().getCanonicalName() + num.toString
+  override def state = "initializing"
+  
+  
 }
 
